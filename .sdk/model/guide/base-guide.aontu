@@ -1,0 +1,20 @@
+# Guide
+
+guide: {
+  metrics: count: entity: 2
+  metrics: count: path: 2
+  metrics: count: method: 2
+
+  entity: validate_format: {
+    path: "/vat/validate-format/{country}/{number}": {
+      op: load: method: *GET
+    }
+  }
+
+  entity: vat: {
+    path: "/vat/{country}/{number}": {
+      op: load: method: *GET
+    }
+  }
+
+}

@@ -1,0 +1,33 @@
+# BasicVatFlow
+
+main: kit: flow: BasicVatFlow:
+{
+  entity: "vat",
+  kind: "basic",
+  name: "BasicVatFlow",
+  step: [
+    {
+      input: {
+        ref: "vat_ref01",
+        srcdatavar: "vat_ref01_data",
+        suffix: "_dt0"
+      }
+
+      match: {
+        country: "country01",
+        id: "vat01"
+      }
+
+      op: "load",
+      valid: [
+        {
+          apply: "TextFieldMark",
+          def: {
+            mark: "Mark01-vat_ref01"
+          }
+        }
+      ]
+    }
+  ],
+  "key$": "BasicVatFlow"
+}

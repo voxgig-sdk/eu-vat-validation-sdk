@@ -1,0 +1,63 @@
+{
+  "existing": {
+    "vat": {
+      "VAT00": {
+        "checked_at": "s5a",
+        "company_address": "s5b",
+        "company_name": "s5c",
+        "country_code": "s5d",
+        "country_name": "s5e",
+        "source": "s5f",
+        "valid": true,
+        "vat_number": "s61",
+        "vat_number_full": "s62",
+        "country": "COUNTRY01",
+        "number": "NUMBER01",
+        "id": "VAT00"
+      },
+      "VAT01": {
+        "checked_at": "sb4",
+        "company_address": "sb5",
+        "company_name": "sb6",
+        "country_code": "sb7",
+        "country_name": "sb8",
+        "source": "sb9",
+        "valid": true,
+        "vat_number": "sbb",
+        "vat_number_full": "sbc",
+        "country": "COUNTRY01",
+        "number": "NUMBER01",
+        "id": "VAT01"
+      },
+      "VAT02": {
+        "checked_at": "s10e",
+        "company_address": "s10f",
+        "company_name": "s110",
+        "country_code": "s111",
+        "country_name": "s112",
+        "source": "s113",
+        "valid": true,
+        "vat_number": "s115",
+        "vat_number_full": "s116",
+        "country": "COUNTRY01",
+        "number": "NUMBER01",
+        "id": "VAT02"
+      }
+    }
+  },
+  "new": {
+    "vat": {
+      "vat_ref01": {
+        "checked_at": "s168",
+        "company_address": "s169",
+        "company_name": "s16a",
+        "country_code": "s16b",
+        "country_name": "s16c",
+        "source": "s16d",
+        "valid": true,
+        "vat_number": "s16f",
+        "vat_number_full": "s170"
+      }
+    }
+  }
+}

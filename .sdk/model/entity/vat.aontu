@@ -1,0 +1,113 @@
+# Entity: vat
+
+main: kit: entity: vat: {
+
+  alias: field: {}
+
+  fields: [
+    {
+      name: "checked_at"
+      req: true
+      type: "`$STRING`"
+    }
+    {
+      name: "company_address"
+      req: false
+      type: "`$STRING`"
+    }
+    {
+      name: "company_name"
+      req: false
+      type: "`$STRING`"
+    }
+    {
+      name: "country_code"
+      req: true
+      type: "`$STRING`"
+    }
+    {
+      name: "country_name"
+      req: true
+      type: "`$STRING`"
+    }
+    {
+      name: "source"
+      req: true
+      type: "`$STRING`"
+    }
+    {
+      name: "valid"
+      req: true
+      type: "`$BOOLEAN`"
+    }
+    {
+      name: "vat_number"
+      req: true
+      type: "`$STRING`"
+    }
+    {
+      name: "vat_number_full"
+      req: true
+      type: "`$STRING`"
+    }
+  ]
+
+  name: "vat"
+  op: {
+    load: {
+      name: "load"
+      points: [
+        {
+          args: {
+            params: [
+              {
+                example: "DE"
+                kind: "param"
+                name: "country"
+                orig: "country"
+                reqd: true
+                type: "`$STRING`"
+              }
+              {
+                example: "190119364"
+                kind: "param"
+                name: "number"
+                orig: "number"
+                reqd: true
+                type: "`$STRING`"
+              }
+            ]
+          }
+          method: "GET"
+          orig: "/vat/{country}/{number}"
+          parts: [
+            "vat"
+            "{country}"
+            "{number}"
+          ]
+          select: {
+            exist: [
+              "country"
+              "number"
+            ]
+          }
+          transform: {
+            req: "`reqdata`"
+            res: "`body`"
+          }
+        }
+      ]
+    }
+  }
+
+  relations: {
+    ancestors: [
+      [
+        "vat"
+      ]
+    ]
+  }
+
+
+
+}

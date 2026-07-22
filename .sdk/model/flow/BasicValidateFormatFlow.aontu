@@ -1,0 +1,33 @@
+# BasicValidateFormatFlow
+
+main: kit: flow: BasicValidateFormatFlow:
+{
+  entity: "validate_format",
+  kind: "basic",
+  name: "BasicValidateFormatFlow",
+  step: [
+    {
+      input: {
+        ref: "validate_format_ref01",
+        srcdatavar: "validate_format_ref01_data",
+        suffix: "_dt0"
+      }
+
+      match: {
+        country: "country01",
+        id: "validate_format01"
+      }
+
+      op: "load",
+      valid: [
+        {
+          apply: "TextFieldMark",
+          def: {
+            mark: "Mark01-validate_format_ref01"
+          }
+        }
+      ]
+    }
+  ],
+  "key$": "BasicValidateFormatFlow"
+}

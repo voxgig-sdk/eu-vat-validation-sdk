@@ -1,0 +1,362 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "EU VAT Validation API",
+    "description": "This API enables real-time validation of EU VAT numbers using the official VIES service. It provides not only the validity of the VAT number but also the associated company's name and address in a single JSON response. Supports all 27 EU member states plus Northern Ireland (XI).",
+    "version": "1.0.0",
+    "contact": {
+      "url": "https://kiprio.com/vat-api/"
+    },
+    "termsOfService": "https://kiprio.com/terms"
+  },
+  "servers": [
+    {
+      "url": "https://kiprio.com/v1",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/vat/{country}/{number}": {
+      "get": {
+        "summary": "Validate EU VAT number with VIES lookup",
+        "description": "Performs real-time validation of an EU VAT number via the official VIES service. Returns validity status, company name, and registered address. Requires API key.",
+        "operationId": "validateVatNumber",
+        "tags": [
+          "VAT Validation"
+        ],
+        "parameters": [
+          {
+            "name": "country",
+            "in": "path",
+            "required": true,
+            "description": "Two-letter ISO country code (e.g., DE, FR, NL, BE, IT, ES, PL, AT, SE, DK, or XI for Northern Ireland)",
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Z]{2}$",
+              "example": "DE"
+            }
+          },
+          {
+            "name": "number",
+            "in": "path",
+            "required": true,
+            "description": "VAT number without country code prefix",
+            "schema": {
+              "type": "string",
+              "example": "190119364"
+            }
+          }
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful VAT validation response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VatValidationResponse"
+                },
+                "example": {
+                  "valid": true,
+                  "country_code": "DE",
+                  "country_name": "Germany",
+                  "vat_number": "190119364",
+                  "vat_number_full": "DE190119364",
+                  "company_name": "EXAMPLE GMBH",
+                  "company_address": "Musterstrasse 1\n10115 Berlin",
+                  "checked_at": "2026-04-26T12:00:00+00:00",
+                  "source": "VIES"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid country code or VAT number format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "VAT number not found or invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VatValidationResponse"
+                },
+                "example": {
+                  "valid": false,
+                  "country_code": "DE",
+                  "country_name": "Germany",
+                  "vat_number": "190119364",
+                  "vat_number_full": "DE190119364",
+                  "company_name": null,
+                  "company_address": null,
+                  "checked_at": "2026-04-26T12:00:00+00:00",
+                  "source": "VIES"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error or VIES service unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vat/validate-format/{country}/{number}": {
+      "get": {
+        "summary": "Validate EU VAT number format offline",
+        "description": "Validates VAT number format locally without querying the VIES service. Instant validation based on country-specific format rules. No API key required.",
+        "operationId": "validateVatFormat",
+        "tags": [
+          "VAT Validation"
+        ],
+        "parameters": [
+          {
+            "name": "country",
+            "in": "path",
+            "required": true,
+            "description": "Two-letter ISO country code (e.g., DE, FR, NL, BE, IT, ES, PL, AT, SE, DK, or XI for Northern Ireland)",
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Z]{2}$",
+              "example": "DE"
+            }
+          },
+          {
+            "name": "number",
+            "in": "path",
+            "required": true,
+            "description": "VAT number without country code prefix",
+            "schema": {
+              "type": "string",
+              "example": "190119364"
+            }
+          }
+        ],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Successful format validation response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VatFormatValidationResponse"
+                },
+                "example": {
+                  "valid": true,
+                  "country_code": "DE",
+                  "country_name": "Germany",
+                  "vat_number": "190119364",
+                  "vat_number_full": "DE190119364",
+                  "checked_at": "2026-04-26T12:00:00+00:00",
+                  "source": "format_check"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid country code or VAT number format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key",
+        "description": "API key for authentication. Get your key at https://kiprio.com/vat-api/"
+      }
+    },
+    "schemas": {
+      "VatValidationResponse": {
+        "type": "object",
+        "properties": {
+          "valid": {
+            "type": "boolean",
+            "description": "Whether the VAT number is valid according to VIES"
+          },
+          "country_code": {
+            "type": "string",
+            "description": "Two-letter ISO country code",
+            "example": "DE"
+          },
+          "country_name": {
+            "type": "string",
+            "description": "Full country name",
+            "example": "Germany"
+          },
+          "vat_number": {
+            "type": "string",
+            "description": "VAT number without country code prefix",
+            "example": "190119364"
+          },
+          "vat_number_full": {
+            "type": "string",
+            "description": "Full VAT number including country code prefix",
+            "example": "DE190119364"
+          },
+          "company_name": {
+            "type": "string",
+            "nullable": true,
+            "description": "Registered company name from VIES",
+            "example": "EXAMPLE GMBH"
+          },
+          "company_address": {
+            "type": "string",
+            "nullable": true,
+            "description": "Registered company address from VIES",
+            "example": "Musterstrasse 1\n10115 Berlin"
+          },
+          "checked_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp of the validation check",
+            "example": "2026-04-26T12:00:00+00:00"
+          },
+          "source": {
+            "type": "string",
+            "description": "Source of validation data",
+            "enum": [
+              "VIES"
+            ],
+            "example": "VIES"
+          }
+        },
+        "required": [
+          "valid",
+          "country_code",
+          "country_name",
+          "vat_number",
+          "vat_number_full",
+          "checked_at",
+          "source"
+        ]
+      },
+      "VatFormatValidationResponse": {
+        "type": "object",
+        "properties": {
+          "valid": {
+            "type": "boolean",
+            "description": "Whether the VAT number format is valid according to country-specific rules"
+          },
+          "country_code": {
+            "type": "string",
+            "description": "Two-letter ISO country code",
+            "example": "DE"
+          },
+          "country_name": {
+            "type": "string",
+            "description": "Full country name",
+            "example": "Germany"
+          },
+          "vat_number": {
+            "type": "string",
+            "description": "VAT number without country code prefix",
+            "example": "190119364"
+          },
+          "vat_number_full": {
+            "type": "string",
+            "description": "Full VAT number including country code prefix",
+            "example": "DE190119364"
+          },
+          "checked_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp of the validation check",
+            "example": "2026-04-26T12:00:00+00:00"
+          },
+          "source": {
+            "type": "string",
+            "description": "Source of validation",
+            "enum": [
+              "format_check"
+            ],
+            "example": "format_check"
+          }
+        },
+        "required": [
+          "valid",
+          "country_code",
+          "country_name",
+          "vat_number",
+          "vat_number_full",
+          "checked_at",
+          "source"
+        ]
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Error message describing what went wrong"
+          },
+          "message": {
+            "type": "string",
+            "description": "Detailed error information"
+          }
+        },
+        "required": [
+          "error"
+        ]
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "VAT Validation",
+      "description": "Operations for validating EU VAT numbers"
+    }
+  ]
+}

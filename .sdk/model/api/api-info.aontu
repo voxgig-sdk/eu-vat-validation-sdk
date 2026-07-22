@@ -1,0 +1,32 @@
+# API Information
+
+
+main: {
+  kit: {
+    info: {
+      contact: {
+        url: "https://kiprio.com/vat-api/"
+      }
+      description: "This API enables real-time validation of EU VAT numbers using the official VIES service. It provides not only the validity of the VAT number but also the associated company's name and address in a single JSON response. Supports all 27 EU member states plus Northern Ireland (XI)."
+      security: {
+        in: "header"
+        name: "X-API-Key"
+        prefix: ""
+        scheme: "ApiKeyAuth"
+        type: "apiKey"
+      }
+      servers: [
+        {
+          description: "Production server"
+          url: "https://kiprio.com/v1"
+        }
+      ]
+      summary: "This API enables real-time validation of EU VAT numbers using the official VIES service."
+      termsOfService: "https://kiprio.com/terms"
+      title: "EU VAT Validation API"
+      version: "1.0.0"
+      website: "https://kiprio.com"
+    }
+  }
+}
+

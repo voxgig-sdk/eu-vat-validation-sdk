@@ -1,0 +1,55 @@
+{
+  "existing": {
+    "validate_format": {
+      "VALIDATE_FORMAT00": {
+        "checked_at": "s46",
+        "country_code": "s47",
+        "country_name": "s48",
+        "source": "s49",
+        "valid": true,
+        "vat_number": "s4b",
+        "vat_number_full": "s4c",
+        "country": "COUNTRY01",
+        "number": "NUMBER01",
+        "id": "VALIDATE_FORMAT00"
+      },
+      "VALIDATE_FORMAT01": {
+        "checked_at": "s8c",
+        "country_code": "s8d",
+        "country_name": "s8e",
+        "source": "s8f",
+        "valid": true,
+        "vat_number": "s91",
+        "vat_number_full": "s92",
+        "country": "COUNTRY01",
+        "number": "NUMBER01",
+        "id": "VALIDATE_FORMAT01"
+      },
+      "VALIDATE_FORMAT02": {
+        "checked_at": "sd2",
+        "country_code": "sd3",
+        "country_name": "sd4",
+        "source": "sd5",
+        "valid": true,
+        "vat_number": "sd7",
+        "vat_number_full": "sd8",
+        "country": "COUNTRY01",
+        "number": "NUMBER01",
+        "id": "VALIDATE_FORMAT02"
+      }
+    }
+  },
+  "new": {
+    "validate_format": {
+      "validate_format_ref01": {
+        "checked_at": "s118",
+        "country_code": "s119",
+        "country_name": "s11a",
+        "source": "s11b",
+        "valid": true,
+        "vat_number": "s11d",
+        "vat_number_full": "s11e"
+      }
+    }
+  }
+}
