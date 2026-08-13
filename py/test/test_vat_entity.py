@@ -6,9 +6,9 @@ import time
 
 import pytest
 
-from utility.voxgig_struct import voxgig_struct as vs
+from euvatvalidation_sdk.utility.voxgig_struct import voxgig_struct as vs
 from euvatvalidation_sdk import EuVatValidationSDK
-from core import helpers
+from euvatvalidation_sdk.core import helpers
 
 _TEST_DIR = os.path.dirname(os.path.abspath(__file__))
 from test import runner
@@ -36,7 +36,7 @@ class TestVatEntity:
         # without an *_ENTID env override, those IDs hit the live API and 4xx.
         if setup.get("synthetic_only"):
             pytest.skip("live entity test uses synthetic IDs from fixture — "
-                        "set EUVATVALIDATION_TEST_VAT_ENTID JSON to run live")
+                        "set EU_VAT_VALIDATION_TEST_VAT_ENTID JSON to run live")
         client = setup["client"]
 
         # Bootstrap entity data from existing test data.
@@ -83,37 +83,37 @@ def _vat_basic_setup(extra):
     # mode is on without a real override, the basic test runs against synthetic
     # IDs from the fixture and 4xx's. We surface this so the test can skip.
     _entid_env_raw = os.environ.get(
-        "EUVATVALIDATION_TEST_VAT_ENTID")
+        "EU_VAT_VALIDATION_TEST_VAT_ENTID")
     _idmap_overridden = _entid_env_raw is not None and _entid_env_raw.strip().startswith("{")
 
     env = runner.env_override({
-        "EUVATVALIDATION_TEST_VAT_ENTID": idmap,
-        "EUVATVALIDATION_TEST_LIVE": "FALSE",
-        "EUVATVALIDATION_TEST_EXPLAIN": "FALSE",
-        "EUVATVALIDATION_APIKEY": "NONE",
+        "EU_VAT_VALIDATION_TEST_VAT_ENTID": idmap,
+        "EU_VAT_VALIDATION_TEST_LIVE": "FALSE",
+        "EU_VAT_VALIDATION_TEST_EXPLAIN": "FALSE",
+        "EU_VAT_VALIDATION_APIKEY": "NONE",
     })
 
     idmap_resolved = helpers.to_map(
-        env.get("EUVATVALIDATION_TEST_VAT_ENTID"))
+        env.get("EU_VAT_VALIDATION_TEST_VAT_ENTID"))
     if idmap_resolved is None:
         idmap_resolved = helpers.to_map(idmap)
 
-    if env.get("EUVATVALIDATION_TEST_LIVE") == "TRUE":
+    if env.get("EU_VAT_VALIDATION_TEST_LIVE") == "TRUE":
         merged_opts = vs.merge([
             {
-                "apikey": env.get("EUVATVALIDATION_APIKEY"),
+                "apikey": env.get("EU_VAT_VALIDATION_APIKEY"),
             },
             extra or {},
         ])
         client = EuVatValidationSDK(helpers.to_map(merged_opts))
 
-    _live = env.get("EUVATVALIDATION_TEST_LIVE") == "TRUE"
+    _live = env.get("EU_VAT_VALIDATION_TEST_LIVE") == "TRUE"
     return {
         "client": client,
         "data": entity_data,
         "idmap": idmap_resolved,
         "env": env,
-        "explain": env.get("EUVATVALIDATION_TEST_EXPLAIN") == "TRUE",
+        "explain": env.get("EU_VAT_VALIDATION_TEST_EXPLAIN") == "TRUE",
         "live": _live,
         "synthetic_only": _live and not _idmap_overridden,
         "now": int(time.time() * 1000),

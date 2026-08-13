@@ -38,7 +38,7 @@ ValidateFormat is nested under country, so provide the `country`.
 
 ```ruby
 begin
-  # load returns the bare ValidateFormat record (raises on error).
+  # load returns the ENTITY — call data_get for the ValidateFormat record (raises on error).
   validateformat = client.ValidateFormat.load({ "country" => "example_country", "number" => "example_number" })
   puts validateformat
 rescue => err
@@ -53,7 +53,7 @@ Entity operations raise on failure, so rescue them:
 
 ```ruby
 begin
-  validateformat = client.ValidateFormat.load()
+  validateformat = client.ValidateFormat.load({ "country" => "example", "number" => "example" })
 rescue => err
   warn "load failed: #{err}"
 end
@@ -121,8 +121,9 @@ Create a mock client for unit testing — no server required:
 ```ruby
 client = EuVatValidationSDK.test
 
-# Entity ops return the bare mock record (raises on error).
-validateformat = client.ValidateFormat.load()
+# Entity ops return the ENTITY (raises on error);
+# call data_get for the mock record.
+validateformat = client.ValidateFormat.load({ "country" => "example", "number" => "example" })
 puts validateformat
 ```
 
@@ -301,7 +302,7 @@ Create an instance: `validate_format = client.ValidateFormat`
 #### Example: Load
 
 ```ruby
-# load returns the bare ValidateFormat record (raises on error).
+# load returns the ENTITY — call data_get for the ValidateFormat record (raises on error).
 validate_format = client.ValidateFormat.load({ "country" => "country", "number" => "number" })
 ```
 
@@ -333,7 +334,7 @@ Create an instance: `vat = client.Vat`
 #### Example: Load
 
 ```ruby
-# load returns the bare Vat record (raises on error).
+# load returns the ENTITY — call data_get for the Vat record (raises on error).
 vat = client.Vat.load({ "country" => "country", "number" => "number" })
 ```
 
@@ -415,7 +416,7 @@ stores the returned data and match criteria internally.
 
 ```ruby
 validateformat = client.ValidateFormat
-validateformat.load()
+validateformat.load({ "country" => "example", "number" => "example" })
 
 # validateformat.data_get now returns the validateformat data from the last load
 # validateformat.match_get returns the last match criteria

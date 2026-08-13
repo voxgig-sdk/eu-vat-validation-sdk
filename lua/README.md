@@ -52,7 +52,7 @@ Entity operations return `(value, err)`. Check `err` before using
 the value:
 
 ```lua
-local validateformat, err = client:ValidateFormat():load()
+local validateformat, err = client:ValidateFormat():load({ country = "example", number = "example" })
 if err then error(err) end
 ```
 
@@ -110,7 +110,7 @@ Create a mock client for unit testing — no server required:
 ```lua
 local client = sdk.test()
 
-local result, err = client:ValidateFormat():load()
+local result, err = client:ValidateFormat():load({ country = "example", number = "example" })
 -- result is the returned data; err is set on failure
 ```
 
@@ -404,7 +404,7 @@ stores the returned data and match criteria internally.
 
 ```lua
 local validateformat = client:ValidateFormat()
-validateformat:load()
+validateformat:load({ country = "example", number = "example" })
 
 -- validateformat:data_get() now returns the validateformat data from the last load
 -- validateformat:match_get() returns the last match criteria

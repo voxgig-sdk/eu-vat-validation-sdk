@@ -69,16 +69,16 @@ def validate_format_direct_setup(mockres)
   calls = []
 
   env = Runner.env_override({
-    "EUVATVALIDATION_TEST_VALIDATE_FORMAT_ENTID" => {},
-    "EUVATVALIDATION_TEST_LIVE" => "FALSE",
-    "EUVATVALIDATION_APIKEY" => "NONE",
+    "EU_VAT_VALIDATION_TEST_VALIDATE_FORMAT_ENTID" => {},
+    "EU_VAT_VALIDATION_TEST_LIVE" => "FALSE",
+    "EU_VAT_VALIDATION_APIKEY" => "NONE",
   })
 
-  live = env["EUVATVALIDATION_TEST_LIVE"] == "TRUE"
+  live = env["EU_VAT_VALIDATION_TEST_LIVE"] == "TRUE"
 
   if live
     merged_opts = {
-      "apikey" => env["EUVATVALIDATION_APIKEY"],
+      "apikey" => env["EU_VAT_VALIDATION_APIKEY"],
     }
     client = EuVatValidationSDK.new(merged_opts)
     return {

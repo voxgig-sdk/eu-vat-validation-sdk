@@ -110,6 +110,7 @@ local function make_config()
                     },
                   },
                 },
+                ["kind"] = "http",
                 ["method"] = "GET",
                 ["orig"] = "/vat/validate-format/{country}/{number}",
                 ["parts"] = {
@@ -240,6 +241,7 @@ local function make_config()
                     },
                   },
                 },
+                ["kind"] = "http",
                 ["method"] = "GET",
                 ["orig"] = "/vat/{country}/{number}",
                 ["parts"] = {

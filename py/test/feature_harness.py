@@ -14,12 +14,12 @@ from __future__ import annotations
 
 from urllib.parse import quote
 
-from config import make_config
-from features import _make_feature
-from core.control import EuVatValidationControl
-from core.error import EuVatValidationError
-from core.result import EuVatValidationResult
-from core.spec import EuVatValidationSpec
+from euvatvalidation_sdk.config import make_config
+from euvatvalidation_sdk.features import _make_feature
+from euvatvalidation_sdk.core.control import EuVatValidationControl
+from euvatvalidation_sdk.core.error import EuVatValidationError
+from euvatvalidation_sdk.core.result import EuVatValidationResult
+from euvatvalidation_sdk.core.spec import EuVatValidationSpec
 
 
 # True when this SDK was generated with the named feature.

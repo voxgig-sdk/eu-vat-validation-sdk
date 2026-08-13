@@ -23,8 +23,8 @@ module EuVatValidationTestRunner
   end
 
   def self.env_override(m)
-    live = getenv("EUVATVALIDATION_TEST_LIVE")
-    override = getenv("EUVATVALIDATION_TEST_OVERRIDE")
+    live = getenv("EU_VAT_VALIDATION_TEST_LIVE")
+    override = getenv("EU_VAT_VALIDATION_TEST_OVERRIDE")
 
     if live == "TRUE" || override == "TRUE"
       m.each_key do |key|
@@ -44,8 +44,8 @@ module EuVatValidationTestRunner
       end
     end
 
-    explain = getenv("EUVATVALIDATION_TEST_EXPLAIN")
-    m["EUVATVALIDATION_TEST_EXPLAIN"] = explain if explain && !explain.empty?
+    explain = getenv("EU_VAT_VALIDATION_TEST_EXPLAIN")
+    m["EU_VAT_VALIDATION_TEST_EXPLAIN"] = explain if explain && !explain.empty?
 
     m
   end

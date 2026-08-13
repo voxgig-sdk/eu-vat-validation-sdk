@@ -42,7 +42,7 @@ client = EuVatValidationSDK({
 ### 3. Load a validateformat
 
 ValidateFormat is nested under country, so provide the `country`.
-`load()` returns the bare record (a `dict`) and raises on error.
+`load()` returns the ENTITY — call data_get() for the record — and raises on error.
 
 ```python
 try:
@@ -59,7 +59,7 @@ Entity operations raise on failure, so wrap them in `try` / `except`:
 
 ```python
 try:
-    validateformat = client.ValidateFormat().load()
+    validateformat = client.ValidateFormat().load({"country": "example", "number": "example"})
     print(validateformat)
 except Exception as err:
     print(f"load failed: {err}")
@@ -126,8 +126,9 @@ Create a mock client for unit testing — no server required:
 ```python
 client = EuVatValidationSDK.test()
 
-# Entity ops return the bare record and raise on error.
-validateformat = client.ValidateFormat().load()
+# Entity ops return the ENTITY and raises on error;
+# call data_get() for the record.
+validateformat = client.ValidateFormat().load({"country": "example", "number": "example"})
 # validateformat contains the mock response record
 ```
 
@@ -225,7 +226,7 @@ All entities share the same interface.
 
 ### Result shape
 
-Entity operations return the bare result data (a `dict` for single-entity
+Entity operations return the ENTITY (call data_get() for the record) (a `dict` for single-entity
 ops, a `list` for `list`) and raise on error. Wrap calls in
 `try`/`except` to handle failures.
 
@@ -418,7 +419,7 @@ stores the returned data and match criteria internally.
 
 ```python
 validateformat = client.ValidateFormat()
-validateformat.load()
+validateformat.load({"country": "example", "number": "example"})
 
 # validateformat.data_get() now returns the validateformat data from the last load
 # validateformat.match_get() returns the last match criteria

@@ -21,7 +21,7 @@ class Config {
 
 
   main = {
-    name: 'ProjectName',
+    name: 'EuVatValidation',
   }
 
 
@@ -143,6 +143,7 @@ class Config {
                   }
                 ]
               },
+              "kind": "http",
               "method": "GET",
               "orig": "/vat/validate-format/{country}/{number}",
               "parts": [
@@ -273,6 +274,7 @@ class Config {
                   }
                 ]
               },
+              "kind": "http",
               "method": "GET",
               "orig": "/vat/{country}/{number}",
               "parts": [

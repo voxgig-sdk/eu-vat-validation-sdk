@@ -59,7 +59,7 @@ Entity operations reject on failure, so wrap them in `try` / `catch`:
 
 ```ts
 try {
-  const validateformat = await client.ValidateFormat().load()
+  const validateformat = await client.ValidateFormat().load({ country: "example", number: "example" })
   console.log(validateformat)
 } catch (err) {
   console.error('load failed:', err)
@@ -126,8 +126,9 @@ Create a mock client for unit testing — no server required:
 ```ts
 const client = EuVatValidationSDK.test()
 
-const validateformat = await client.ValidateFormat().load()
-// validateformat is a bare entity populated with mock response data
+const validateformat = await client.ValidateFormat().load({ country: 'example_country', number: 'example_number' })
+// validateformat is the entity, populated with mock response data
+// — call validateformat.data() for the record itself
 console.log(validateformat)
 ```
 
@@ -146,7 +147,7 @@ Entity instances remember their last match and data:
 const entity = client.ValidateFormat()
 
 // First call runs the operation and stores its result
-await entity.load()
+await entity.load({ country: 'example_country', number: 'example_number' })
 
 // Subsequent calls reuse the stored state
 const data = entity.data()
@@ -460,7 +461,7 @@ calls on the same instance can rely on this state.
 
 ```ts
 const validateformat = client.ValidateFormat()
-await validateformat.load()
+await validateformat.load({ country: "example", number: "example" })
 
 // validateformat.data() now returns the validateformat data from the last `load`
 // validateformat.match() returns the last match criteria

@@ -29,7 +29,7 @@ describe("ValidateFormatEntity", function()
     -- The basic flow consumes synthetic IDs from the fixture. In live mode
     -- without an *_ENTID env override, those IDs hit the live API and 4xx.
     if setup.synthetic_only then
-      pending("live entity test uses synthetic IDs from fixture — set EUVATVALIDATION_TEST_VALIDATE_FORMAT_ENTID JSON to run live")
+      pending("live entity test uses synthetic IDs from fixture — set EU_VAT_VALIDATION_TEST_VALIDATE_FORMAT_ENTID JSON to run live")
       return
     end
     local client = setup.client
@@ -84,39 +84,39 @@ function validate_format_basic_setup(extra)
   -- Detect ENTID env override before envOverride consumes it. When live
   -- mode is on without a real override, the basic test runs against synthetic
   -- IDs from the fixture and 4xx's. Surface this so the test can skip.
-  local entid_env_raw = os.getenv("EUVATVALIDATION_TEST_VALIDATE_FORMAT_ENTID")
+  local entid_env_raw = os.getenv("EU_VAT_VALIDATION_TEST_VALIDATE_FORMAT_ENTID")
   local idmap_overridden = entid_env_raw ~= nil and entid_env_raw:match("^%s*{") ~= nil
 
   local env = runner.env_override({
-    ["EUVATVALIDATION_TEST_VALIDATE_FORMAT_ENTID"] = idmap,
-    ["EUVATVALIDATION_TEST_LIVE"] = "FALSE",
-    ["EUVATVALIDATION_TEST_EXPLAIN"] = "FALSE",
-    ["EUVATVALIDATION_APIKEY"] = "NONE",
+    ["EU_VAT_VALIDATION_TEST_VALIDATE_FORMAT_ENTID"] = idmap,
+    ["EU_VAT_VALIDATION_TEST_LIVE"] = "FALSE",
+    ["EU_VAT_VALIDATION_TEST_EXPLAIN"] = "FALSE",
+    ["EU_VAT_VALIDATION_APIKEY"] = "NONE",
   })
 
   local idmap_resolved = helpers.to_map(
-    env["EUVATVALIDATION_TEST_VALIDATE_FORMAT_ENTID"])
+    env["EU_VAT_VALIDATION_TEST_VALIDATE_FORMAT_ENTID"])
   if idmap_resolved == nil then
     idmap_resolved = helpers.to_map(idmap)
   end
 
-  if env["EUVATVALIDATION_TEST_LIVE"] == "TRUE" then
+  if env["EU_VAT_VALIDATION_TEST_LIVE"] == "TRUE" then
     local merged_opts = vs.merge({
       {
-        apikey = env["EUVATVALIDATION_APIKEY"],
+        apikey = env["EU_VAT_VALIDATION_APIKEY"],
       },
       extra or {},
     })
     client = sdk.new(helpers.to_map(merged_opts))
   end
 
-  local live = env["EUVATVALIDATION_TEST_LIVE"] == "TRUE"
+  local live = env["EU_VAT_VALIDATION_TEST_LIVE"] == "TRUE"
   return {
     client = client,
     data = entity_data,
     idmap = idmap_resolved,
     env = env,
-    explain = env["EUVATVALIDATION_TEST_EXPLAIN"] == "TRUE",
+    explain = env["EU_VAT_VALIDATION_TEST_EXPLAIN"] == "TRUE",
     live = live,
     synthetic_only = live and not idmap_overridden,
     now = os.time() * 1000,

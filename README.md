@@ -23,7 +23,7 @@ support (`load`):
 
 ```ts
 const client = new EuVatValidationSDK()
-const validateformat = await client.ValidateFormat().load()
+const validateformat = await client.ValidateFormat().load({ country: "example", number: "example" })
 ```
 
 Thinking in entities keeps the mental model small — for people and AI agents alike —
@@ -38,9 +38,18 @@ network, and no credentials:
 ### TypeScript
 
 ```ts
-const client = EuVatValidationSDK.test()
+// The offline mock starts EMPTY — seed it with the records the test needs.
+// Shape: { entity: { <entity-name>: { <id>: <record> } } }
+const client = EuVatValidationSDK.test({
+  entity: {
+    validate_format: {
+      test01: { id: 'test01' },
+    },
+  },
+})
 const validateformat = await client.ValidateFormat().load({ country: 'example_country', number: 'example_number' })
-// validateformat is a bare ValidateFormat populated with mock data
+// validateformat is the ValidateFormat entity, populated with mock data
+// — call validateformat.data() for the record itself
 console.log(validateformat)
 ```
 
@@ -194,7 +203,7 @@ $client = new EuVatValidationSDK([
 ]);
 
 
-// Load a specific validateformat (returns the bare record; throws on error)
+// Load a specific validateformat (returns the ENTITY; call data_get() for the record; throws on error)
 $validateformat = $client->ValidateFormat()->load(["country" => "example_country", "number" => "example_number"]);
 print_r($validateformat);
 ```
@@ -229,7 +238,7 @@ client = EuVatValidationSDK.new({
 })
 
 
-# Load a specific validateformat (returns the bare record; raises on error)
+# Load a specific validateformat (returns the ENTITY; call data_get for the record)
 validateformat = client.ValidateFormat.load({ "country" => "example_country", "number" => "example_number" })
 puts validateformat
 ```
@@ -365,6 +374,9 @@ Pass custom features via the `extend` option at construction time.
 
 This SDK is generated from the upstream OpenAPI specification. It is an
 unofficial client and is not affiliated with the API provider.
+
+The OpenAPI spec(s) this SDK was generated from are kept in the
+[`.sdk/def/`](.sdk/def/) folder.
 
 - Upstream API: [https://kiprio.com/vat-api/](https://kiprio.com/vat-api/)
 

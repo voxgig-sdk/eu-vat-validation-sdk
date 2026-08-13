@@ -70,16 +70,16 @@ function vat_direct_setup(mockres)
   local calls = {}
 
   local env = runner.env_override({
-    ["EUVATVALIDATION_TEST_VAT_ENTID"] = {},
-    ["EUVATVALIDATION_TEST_LIVE"] = "FALSE",
-    ["EUVATVALIDATION_APIKEY"] = "NONE",
+    ["EU_VAT_VALIDATION_TEST_VAT_ENTID"] = {},
+    ["EU_VAT_VALIDATION_TEST_LIVE"] = "FALSE",
+    ["EU_VAT_VALIDATION_APIKEY"] = "NONE",
   })
 
-  local live = env["EUVATVALIDATION_TEST_LIVE"] == "TRUE"
+  local live = env["EU_VAT_VALIDATION_TEST_LIVE"] == "TRUE"
 
   if live then
     local merged_opts = {
-      apikey = env["EUVATVALIDATION_APIKEY"],
+      apikey = env["EU_VAT_VALIDATION_APIKEY"],
     }
     local client = sdk.new(merged_opts)
     return {

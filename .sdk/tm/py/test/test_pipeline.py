@@ -16,11 +16,11 @@
 import pytest
 
 from projectname_sdk import EuVatValidationSDK
-from core.error import EuVatValidationError
-from core.result import EuVatValidationResult
-from core.response import EuVatValidationResponse
-from core.spec import EuVatValidationSpec
-from feature.base_feature import EuVatValidationBaseFeature
+from projectname_sdk.core.error import EuVatValidationError
+from projectname_sdk.core.result import EuVatValidationResult
+from projectname_sdk.core.response import EuVatValidationResponse
+from projectname_sdk.core.spec import EuVatValidationSpec
+from projectname_sdk.feature.base_feature import EuVatValidationBaseFeature
 
 
 def _client():

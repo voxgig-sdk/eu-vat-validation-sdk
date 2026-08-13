@@ -43,8 +43,8 @@ class EuVatValidationTestRunner
 
     public static function env_override(array $m): array
     {
-        $live = self::getenv('EUVATVALIDATION_TEST_LIVE');
-        $override = self::getenv('EUVATVALIDATION_TEST_OVERRIDE');
+        $live = self::getenv('EU_VAT_VALIDATION_TEST_LIVE');
+        $override = self::getenv('EU_VAT_VALIDATION_TEST_OVERRIDE');
 
         if ($live === 'TRUE' || $override === 'TRUE') {
             foreach (array_keys($m) as $key) {
@@ -63,9 +63,9 @@ class EuVatValidationTestRunner
             }
         }
 
-        $explain = self::getenv('EUVATVALIDATION_TEST_EXPLAIN');
+        $explain = self::getenv('EU_VAT_VALIDATION_TEST_EXPLAIN');
         if ($explain !== null && $explain !== '') {
-            $m['EUVATVALIDATION_TEST_EXPLAIN'] = $explain;
+            $m['EU_VAT_VALIDATION_TEST_EXPLAIN'] = $explain;
         }
 
         return $m;

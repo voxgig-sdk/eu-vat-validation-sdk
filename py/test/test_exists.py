@@ -1,4 +1,4 @@
-# ProjectName SDK exists test
+# EuVatValidation SDK exists test
 
 import pytest
 from euvatvalidation_sdk import EuVatValidationSDK

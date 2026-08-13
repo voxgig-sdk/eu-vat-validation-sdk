@@ -39,7 +39,7 @@ ValidateFormat is nested under country, so provide the `country`.
 
 ```php
 try {
-    // load() returns the bare ValidateFormat record (throws on error).
+    // load() returns the ENTITY — call data_get() for the ValidateFormat record (throws on error).
     $validateformat = $client->ValidateFormat()->load(["country" => "example_country", "number" => "example_number"]);
     print_r($validateformat);
 } catch (\Throwable $err) {
@@ -55,7 +55,7 @@ Entity operations throw a `\Throwable` on failure, so wrap them in
 
 ```php
 try {
-    $validateformat = $client->ValidateFormat()->load();
+    $validateformat = $client->ValidateFormat()->load(["country" => "example", "number" => "example"]);
 } catch (\Throwable $err) {
     echo "Error: " . $err->getMessage();
 }
@@ -127,8 +127,9 @@ Create a mock client for unit testing — no server required:
 ```php
 $client = EuVatValidationSDK::test();
 
-// Entity ops return the bare mock record (throws on error).
-$validateformat = $client->ValidateFormat()->load();
+// Entity ops return the ENTITY (throws on error);
+// call data_get() for the mock record.
+$validateformat = $client->ValidateFormat()->load(["country" => "example", "number" => "example"]);
 print_r($validateformat);
 ```
 
@@ -229,7 +230,7 @@ All entities share the same interface.
 
 ### Result shape
 
-Entity operations return the bare result data (an `array` for single-entity
+Entity operations return the ENTITY (call data_get() for the record) (an `array` for single-entity
 ops, a `list` for `list`) and throw on error. Wrap calls in
 `try`/`catch` to handle failures.
 
@@ -311,7 +312,7 @@ Create an instance: `$validate_format = $client->ValidateFormat();`
 #### Example: Load
 
 ```php
-// load() returns the bare ValidateFormat record (throws on error).
+// load() returns the ENTITY — call data_get() for the ValidateFormat record (throws on error).
 $validate_format = $client->ValidateFormat()->load(["country" => "country", "number" => "number"]);
 ```
 
@@ -343,7 +344,7 @@ Create an instance: `$vat = $client->Vat();`
 #### Example: Load
 
 ```php
-// load() returns the bare Vat record (throws on error).
+// load() returns the ENTITY — call data_get() for the Vat record (throws on error).
 $vat = $client->Vat()->load(["country" => "country", "number" => "number"]);
 ```
 
@@ -425,7 +426,7 @@ stores the returned data and match criteria internally.
 
 ```php
 $validateformat = $client->ValidateFormat();
-$validateformat->load();
+$validateformat->load(["country" => "example", "number" => "example"]);
 
 // $validateformat->data_get() now returns the validateformat data from the last load
 // $validateformat->match_get() returns the last match criteria

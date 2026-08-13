@@ -24,6 +24,7 @@ require_relative 'prepare_method'
 require_relative 'prepare_params'
 require_relative 'prepare_path'
 require_relative 'prepare_query'
+require_relative 'graphql'
 require_relative 'result_basic'
 require_relative 'result_body'
 require_relative 'result_headers'
@@ -55,6 +56,8 @@ EuVatValidationUtility.registrar = ->(u) {
   u.prepare_params = EuVatValidationUtilities::PrepareParams
   u.prepare_path = EuVatValidationUtilities::PreparePath
   u.prepare_query = EuVatValidationUtilities::PrepareQuery
+  u.graphql_body = EuVatValidationUtilities::GraphqlBody
+  u.graphql_errors = EuVatValidationUtilities::GraphqlErrors
   u.result_basic = EuVatValidationUtilities::ResultBasic
   u.result_body = EuVatValidationUtilities::ResultBody
   u.result_headers = EuVatValidationUtilities::ResultHeaders

@@ -69,7 +69,7 @@ Every entity operation returns `(value, error)`. Check `err` before
 using the value — there is no exception to catch:
 
 ```go
-validateformat, err := client.ValidateFormat(nil).Load(nil, nil)
+validateformat, err := client.ValidateFormat(nil).Load(map[string]any{"country": "example", "number": "example"}, nil)
 if err != nil {
     // handle err
     return
@@ -139,7 +139,7 @@ Create a mock client for unit testing — no server required:
 client := sdk.Test()
 
 validateFormat, err := client.ValidateFormat(nil).Load(
-    nil, nil,
+    map[string]any{"country": "example", "number": "example"}, nil,
 )
 if err != nil {
     panic(err)
@@ -441,7 +441,7 @@ stores the returned data and match criteria internally.
 
 ```go
 validateformat := client.ValidateFormat(nil)
-validateformat.Load(nil, nil)
+validateformat.Load(map[string]any{"country": "example", "number": "example"}, nil)
 
 // validateformat.Data() now returns the validateformat data from the last load
 // validateformat.Match() returns the last match criteria

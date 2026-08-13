@@ -111,6 +111,7 @@ module EuVatValidationConfig
                       },
                     ],
                   },
+                  "kind" => "http",
                   "method" => "GET",
                   "orig" => "/vat/validate-format/{country}/{number}",
                   "parts" => [
@@ -241,6 +242,7 @@ module EuVatValidationConfig
                       },
                     ],
                   },
+                  "kind" => "http",
                   "method" => "GET",
                   "orig" => "/vat/{country}/{number}",
                   "parts" => [
