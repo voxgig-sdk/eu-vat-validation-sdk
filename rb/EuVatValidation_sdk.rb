@@ -28,7 +28,7 @@ class EuVatValidationSDK
     utility = EuVatValidationUtility.new
     @_utility = utility
 
-    config = EuVatValidationConfig.make_config
+    config = EuVatValidationConfig.shared_config
 
     @_rootctx = utility.make_context.call({
       "client" => self,

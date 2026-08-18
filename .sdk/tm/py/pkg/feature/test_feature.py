@@ -1,4 +1,4 @@
-# ProjectName SDK test feature
+# EuVatValidation SDK test feature
 
 from __future__ import annotations
 import re
@@ -6,7 +6,7 @@ import random
 import time
 
 from projectname_sdk.utility.voxgig_struct import voxgig_struct as vs
-from projectname_sdk.feature.base_feature import ProjectNameBaseFeature
+from projectname_sdk.feature.base_feature import EuVatValidationBaseFeature
 
 
 # The `body.<key>` form of an op's response transform: the mock wraps its
@@ -14,7 +14,7 @@ from projectname_sdk.feature.base_feature import ProjectNameBaseFeature
 ENVELOPE_RES_RE = re.compile(r"^`body\.([^`.]+)`$")
 
 
-class ProjectNameTestFeature(ProjectNameBaseFeature):
+class EuVatValidationTestFeature(EuVatValidationBaseFeature):
     def __init__(self):
         super().__init__()
         self.version = "0.0.1"

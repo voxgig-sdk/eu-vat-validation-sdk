@@ -15,7 +15,7 @@ require_relative "../EuVatValidation_sdk"
 module EuVatValidationFeatureHarness
   # True when this SDK was generated with the named feature.
   def self.has_feature?(name)
-    f = EuVatValidationConfig.make_config["feature"]
+    f = EuVatValidationConfig.shared_config["feature"]
     f.is_a?(Hash) && !f[name].nil?
   end
 

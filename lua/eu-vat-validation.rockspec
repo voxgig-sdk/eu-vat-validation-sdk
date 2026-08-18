@@ -23,6 +23,7 @@ build = {
   modules = {
     ["eu-vat-validation_sdk"] = "eu-vat-validation_sdk.lua",
     ["config"] = "config.lua",
+    ["config_shared"] = "config_shared.lua",
     ["features"] = "features.lua",
   }
 }

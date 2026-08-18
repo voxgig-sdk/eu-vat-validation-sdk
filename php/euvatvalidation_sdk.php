@@ -40,7 +40,7 @@ class EuVatValidationSDK
         $utility = new EuVatValidationUtility();
         $this->_utility = $utility;
 
-        $config = EuVatValidationConfig::make_config();
+        $config = EuVatValidationConfig::shared_config();
 
         $this->_rootctx = ($utility->make_context)([
             "client" => $this,
