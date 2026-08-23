@@ -28,6 +28,9 @@ def make_config():
     return {
         "main": {
             "name": "EuVatValidation",
+            "slug": "eu-vat-validation",
+            "version": "0.0.1",
+            "target": "py",
         },
         "feature": {
             "test": {
@@ -55,36 +58,43 @@ def make_config():
           {
             "name": "checked_at",
             "req": True,
+            "short": "Timestamp of the validation check",
             "type": "`$STRING`",
           },
           {
             "name": "country_code",
             "req": True,
+            "short": "Two-letter ISO country code",
             "type": "`$STRING`",
           },
           {
             "name": "country_name",
             "req": True,
+            "short": "Full country name",
             "type": "`$STRING`",
           },
           {
             "name": "source",
             "req": True,
+            "short": "Source of validation",
             "type": "`$STRING`",
           },
           {
             "name": "valid",
             "req": True,
+            "short": "Whether the VAT number format is valid according to country-specific rules",
             "type": "`$BOOLEAN`",
           },
           {
             "name": "vat_number",
             "req": True,
+            "short": "VAT number without country code prefix",
             "type": "`$STRING`",
           },
           {
             "name": "vat_number_full",
             "req": True,
+            "short": "Full VAT number including country code prefix",
             "type": "`$STRING`",
           },
         ],
@@ -151,44 +161,53 @@ def make_config():
           {
             "name": "checked_at",
             "req": True,
+            "short": "Timestamp of the validation check",
             "type": "`$STRING`",
           },
           {
             "name": "company_address",
+            "short": "Registered company address from VIES",
             "type": "`$STRING`",
           },
           {
             "name": "company_name",
+            "short": "Registered company name from VIES",
             "type": "`$STRING`",
           },
           {
             "name": "country_code",
             "req": True,
+            "short": "Two-letter ISO country code",
             "type": "`$STRING`",
           },
           {
             "name": "country_name",
             "req": True,
+            "short": "Full country name",
             "type": "`$STRING`",
           },
           {
             "name": "source",
             "req": True,
+            "short": "Source of validation data",
             "type": "`$STRING`",
           },
           {
             "name": "valid",
             "req": True,
+            "short": "Whether the VAT number is valid according to VIES",
             "type": "`$BOOLEAN`",
           },
           {
             "name": "vat_number",
             "req": True,
+            "short": "VAT number without country code prefix",
             "type": "`$STRING`",
           },
           {
             "name": "vat_number_full",
             "req": True,
+            "short": "Full VAT number including country code prefix",
             "type": "`$STRING`",
           },
         ],

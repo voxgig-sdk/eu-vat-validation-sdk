@@ -97,13 +97,13 @@ $validate_format = $client->ValidateFormat();
 
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
-| `checked_at` | `string` | Yes |  |
-| `country_code` | `string` | Yes |  |
-| `country_name` | `string` | Yes |  |
-| `source` | `string` | Yes |  |
-| `valid` | `bool` | Yes |  |
-| `vat_number` | `string` | Yes |  |
-| `vat_number_full` | `string` | Yes |  |
+| `checked_at` | `string` | Yes | Timestamp of the validation check |
+| `country_code` | `string` | Yes | Two-letter ISO country code |
+| `country_name` | `string` | Yes | Full country name |
+| `source` | `string` | Yes | Source of validation |
+| `valid` | `bool` | Yes | Whether the VAT number format is valid according to country-specific rules |
+| `vat_number` | `string` | Yes | VAT number without country code prefix |
+| `vat_number_full` | `string` | Yes | Full VAT number including country code prefix |
 
 ### Operations
 
@@ -155,15 +155,15 @@ $vat = $client->Vat();
 
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
-| `checked_at` | `string` | Yes |  |
-| `company_address` | `string` | No |  |
-| `company_name` | `string` | No |  |
-| `country_code` | `string` | Yes |  |
-| `country_name` | `string` | Yes |  |
-| `source` | `string` | Yes |  |
-| `valid` | `bool` | Yes |  |
-| `vat_number` | `string` | Yes |  |
-| `vat_number_full` | `string` | Yes |  |
+| `checked_at` | `string` | Yes | Timestamp of the validation check |
+| `company_address` | `string` | No | Registered company address from VIES |
+| `company_name` | `string` | No | Registered company name from VIES |
+| `country_code` | `string` | Yes | Two-letter ISO country code |
+| `country_name` | `string` | Yes | Full country name |
+| `source` | `string` | Yes | Source of validation data |
+| `valid` | `bool` | Yes | Whether the VAT number is valid according to VIES |
+| `vat_number` | `string` | Yes | VAT number without country code prefix |
+| `vat_number_full` | `string` | Yes | Full VAT number including country code prefix |
 
 ### Operations
 

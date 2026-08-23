@@ -98,13 +98,13 @@ validate_format = client.ValidateFormat
 
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
-| `checked_at` | `String` | Yes |  |
-| `country_code` | `String` | Yes |  |
-| `country_name` | `String` | Yes |  |
-| `source` | `String` | Yes |  |
-| `valid` | `Boolean` | Yes |  |
-| `vat_number` | `String` | Yes |  |
-| `vat_number_full` | `String` | Yes |  |
+| `checked_at` | `String` | Yes | Timestamp of the validation check |
+| `country_code` | `String` | Yes | Two-letter ISO country code |
+| `country_name` | `String` | Yes | Full country name |
+| `source` | `String` | Yes | Source of validation |
+| `valid` | `Boolean` | Yes | Whether the VAT number format is valid according to country-specific rules |
+| `vat_number` | `String` | Yes | VAT number without country code prefix |
+| `vat_number_full` | `String` | Yes | Full VAT number including country code prefix |
 
 ### Operations
 
@@ -156,15 +156,15 @@ vat = client.Vat
 
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
-| `checked_at` | `String` | Yes |  |
-| `company_address` | `String` | No |  |
-| `company_name` | `String` | No |  |
-| `country_code` | `String` | Yes |  |
-| `country_name` | `String` | Yes |  |
-| `source` | `String` | Yes |  |
-| `valid` | `Boolean` | Yes |  |
-| `vat_number` | `String` | Yes |  |
-| `vat_number_full` | `String` | Yes |  |
+| `checked_at` | `String` | Yes | Timestamp of the validation check |
+| `company_address` | `String` | No | Registered company address from VIES |
+| `company_name` | `String` | No | Registered company name from VIES |
+| `country_code` | `String` | Yes | Two-letter ISO country code |
+| `country_name` | `String` | Yes | Full country name |
+| `source` | `String` | Yes | Source of validation data |
+| `valid` | `Boolean` | Yes | Whether the VAT number is valid according to VIES |
+| `vat_number` | `String` | Yes | VAT number without country code prefix |
+| `vat_number_full` | `String` | Yes | Full VAT number including country code prefix |
 
 ### Operations
 

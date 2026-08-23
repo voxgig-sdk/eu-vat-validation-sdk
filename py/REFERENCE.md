@@ -92,13 +92,13 @@ validate_format = client.ValidateFormat()
 
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
-| `checked_at` | `str` | Yes |  |
-| `country_code` | `str` | Yes |  |
-| `country_name` | `str` | Yes |  |
-| `source` | `str` | Yes |  |
-| `valid` | `bool` | Yes |  |
-| `vat_number` | `str` | Yes |  |
-| `vat_number_full` | `str` | Yes |  |
+| `checked_at` | `str` | Yes | Timestamp of the validation check |
+| `country_code` | `str` | Yes | Two-letter ISO country code |
+| `country_name` | `str` | Yes | Full country name |
+| `source` | `str` | Yes | Source of validation |
+| `valid` | `bool` | Yes | Whether the VAT number format is valid according to country-specific rules |
+| `vat_number` | `str` | Yes | VAT number without country code prefix |
+| `vat_number_full` | `str` | Yes | Full VAT number including country code prefix |
 
 ### Operations
 
@@ -149,15 +149,15 @@ vat = client.Vat()
 
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
-| `checked_at` | `str` | Yes |  |
-| `company_address` | `str` | No |  |
-| `company_name` | `str` | No |  |
-| `country_code` | `str` | Yes |  |
-| `country_name` | `str` | Yes |  |
-| `source` | `str` | Yes |  |
-| `valid` | `bool` | Yes |  |
-| `vat_number` | `str` | Yes |  |
-| `vat_number_full` | `str` | Yes |  |
+| `checked_at` | `str` | Yes | Timestamp of the validation check |
+| `company_address` | `str` | No | Registered company address from VIES |
+| `company_name` | `str` | No | Registered company name from VIES |
+| `country_code` | `str` | Yes | Two-letter ISO country code |
+| `country_name` | `str` | Yes | Full country name |
+| `source` | `str` | Yes | Source of validation data |
+| `valid` | `bool` | Yes | Whether the VAT number is valid according to VIES |
+| `vat_number` | `str` | Yes | VAT number without country code prefix |
+| `vat_number_full` | `str` | Yes | Full VAT number including country code prefix |
 
 ### Operations
 

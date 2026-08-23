@@ -232,13 +232,13 @@ Only `direct()` returns a response envelope — a `table` with `ok`,
 
 | Field | Description |
 | --- | --- |
-| `checked_at` |  |
-| `country_code` |  |
-| `country_name` |  |
-| `source` |  |
-| `valid` |  |
-| `vat_number` |  |
-| `vat_number_full` |  |
+| `checked_at` | Timestamp of the validation check |
+| `country_code` | Two-letter ISO country code |
+| `country_name` | Full country name |
+| `source` | Source of validation |
+| `valid` | Whether the VAT number format is valid according to country-specific rules |
+| `vat_number` | VAT number without country code prefix |
+| `vat_number_full` | Full VAT number including country code prefix |
 
 Operations: Load.
 
@@ -248,15 +248,15 @@ API path: `/vat/validate-format/{country}/{number}`
 
 | Field | Description |
 | --- | --- |
-| `checked_at` |  |
-| `company_address` |  |
-| `company_name` |  |
-| `country_code` |  |
-| `country_name` |  |
-| `source` |  |
-| `valid` |  |
-| `vat_number` |  |
-| `vat_number_full` |  |
+| `checked_at` | Timestamp of the validation check |
+| `company_address` | Registered company address from VIES |
+| `company_name` | Registered company name from VIES |
+| `country_code` | Two-letter ISO country code |
+| `country_name` | Full country name |
+| `source` | Source of validation data |
+| `valid` | Whether the VAT number is valid according to VIES |
+| `vat_number` | VAT number without country code prefix |
+| `vat_number_full` | Full VAT number including country code prefix |
 
 Operations: Load.
 
@@ -281,13 +281,13 @@ Create an instance: `local validate_format = client:ValidateFormat(nil)`
 
 | Field | Type | Description |
 | --- | --- | --- |
-| `checked_at` | `string` |  |
-| `country_code` | `string` |  |
-| `country_name` | `string` |  |
-| `source` | `string` |  |
-| `valid` | `boolean` |  |
-| `vat_number` | `string` |  |
-| `vat_number_full` | `string` |  |
+| `checked_at` | `string` | Timestamp of the validation check |
+| `country_code` | `string` | Two-letter ISO country code |
+| `country_name` | `string` | Full country name |
+| `source` | `string` | Source of validation |
+| `valid` | `boolean` | Whether the VAT number format is valid according to country-specific rules |
+| `vat_number` | `string` | VAT number without country code prefix |
+| `vat_number_full` | `string` | Full VAT number including country code prefix |
 
 #### Example: Load
 
@@ -310,15 +310,15 @@ Create an instance: `local vat = client:Vat(nil)`
 
 | Field | Type | Description |
 | --- | --- | --- |
-| `checked_at` | `string` |  |
-| `company_address` | `string` |  |
-| `company_name` | `string` |  |
-| `country_code` | `string` |  |
-| `country_name` | `string` |  |
-| `source` | `string` |  |
-| `valid` | `boolean` |  |
-| `vat_number` | `string` |  |
-| `vat_number_full` | `string` |  |
+| `checked_at` | `string` | Timestamp of the validation check |
+| `company_address` | `string` | Registered company address from VIES |
+| `company_name` | `string` | Registered company name from VIES |
+| `country_code` | `string` | Two-letter ISO country code |
+| `country_name` | `string` | Full country name |
+| `source` | `string` | Source of validation data |
+| `valid` | `boolean` | Whether the VAT number is valid according to VIES |
+| `vat_number` | `string` | VAT number without country code prefix |
+| `vat_number_full` | `string` | Full VAT number including country code prefix |
 
 #### Example: Load
 

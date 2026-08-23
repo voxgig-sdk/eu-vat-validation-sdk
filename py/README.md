@@ -248,13 +248,13 @@ On error, `ok` is `False` and `err` contains the error value.
 
 | Field | Description |
 | --- | --- |
-| `checked_at` |  |
-| `country_code` |  |
-| `country_name` |  |
-| `source` |  |
-| `valid` |  |
-| `vat_number` |  |
-| `vat_number_full` |  |
+| `checked_at` | Timestamp of the validation check |
+| `country_code` | Two-letter ISO country code |
+| `country_name` | Full country name |
+| `source` | Source of validation |
+| `valid` | Whether the VAT number format is valid according to country-specific rules |
+| `vat_number` | VAT number without country code prefix |
+| `vat_number_full` | Full VAT number including country code prefix |
 
 Operations: Load.
 
@@ -264,15 +264,15 @@ API path: `/vat/validate-format/{country}/{number}`
 
 | Field | Description |
 | --- | --- |
-| `checked_at` |  |
-| `company_address` |  |
-| `company_name` |  |
-| `country_code` |  |
-| `country_name` |  |
-| `source` |  |
-| `valid` |  |
-| `vat_number` |  |
-| `vat_number_full` |  |
+| `checked_at` | Timestamp of the validation check |
+| `company_address` | Registered company address from VIES |
+| `company_name` | Registered company name from VIES |
+| `country_code` | Two-letter ISO country code |
+| `country_name` | Full country name |
+| `source` | Source of validation data |
+| `valid` | Whether the VAT number is valid according to VIES |
+| `vat_number` | VAT number without country code prefix |
+| `vat_number_full` | Full VAT number including country code prefix |
 
 Operations: Load.
 
@@ -297,13 +297,13 @@ Create an instance: `validate_format = client.ValidateFormat()`
 
 | Field | Type | Description |
 | --- | --- | --- |
-| `checked_at` | `str` |  |
-| `country_code` | `str` |  |
-| `country_name` | `str` |  |
-| `source` | `str` |  |
-| `valid` | `bool` |  |
-| `vat_number` | `str` |  |
-| `vat_number_full` | `str` |  |
+| `checked_at` | `str` | Timestamp of the validation check |
+| `country_code` | `str` | Two-letter ISO country code |
+| `country_name` | `str` | Full country name |
+| `source` | `str` | Source of validation |
+| `valid` | `bool` | Whether the VAT number format is valid according to country-specific rules |
+| `vat_number` | `str` | VAT number without country code prefix |
+| `vat_number_full` | `str` | Full VAT number including country code prefix |
 
 #### Example: Load
 
@@ -326,15 +326,15 @@ Create an instance: `vat = client.Vat()`
 
 | Field | Type | Description |
 | --- | --- | --- |
-| `checked_at` | `str` |  |
-| `company_address` | `str` |  |
-| `company_name` | `str` |  |
-| `country_code` | `str` |  |
-| `country_name` | `str` |  |
-| `source` | `str` |  |
-| `valid` | `bool` |  |
-| `vat_number` | `str` |  |
-| `vat_number_full` | `str` |  |
+| `checked_at` | `str` | Timestamp of the validation check |
+| `company_address` | `str` | Registered company address from VIES |
+| `company_name` | `str` | Registered company name from VIES |
+| `country_code` | `str` | Two-letter ISO country code |
+| `country_name` | `str` | Full country name |
+| `source` | `str` | Source of validation data |
+| `valid` | `bool` | Whether the VAT number is valid according to VIES |
+| `vat_number` | `str` | VAT number without country code prefix |
+| `vat_number_full` | `str` | Full VAT number including country code prefix |
 
 #### Example: Load
 

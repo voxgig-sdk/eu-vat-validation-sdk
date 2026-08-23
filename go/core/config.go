@@ -11,6 +11,9 @@ func MakeConfig() map[string]any {
 	return map[string]any{
 		"main": map[string]any{
 			"name": "EuVatValidation",
+			"slug": "eu-vat-validation",
+			"version": "0.0.1",
+			"target": "go",
 		},
 		"feature": map[string]any{
 			"test": map[string]any{
@@ -38,36 +41,43 @@ func MakeConfig() map[string]any {
 					map[string]any{
 						"name": "checked_at",
 						"req": true,
+						"short": "Timestamp of the validation check",
 						"type": "`$STRING`",
 					},
 					map[string]any{
 						"name": "country_code",
 						"req": true,
+						"short": "Two-letter ISO country code",
 						"type": "`$STRING`",
 					},
 					map[string]any{
 						"name": "country_name",
 						"req": true,
+						"short": "Full country name",
 						"type": "`$STRING`",
 					},
 					map[string]any{
 						"name": "source",
 						"req": true,
+						"short": "Source of validation",
 						"type": "`$STRING`",
 					},
 					map[string]any{
 						"name": "valid",
 						"req": true,
+						"short": "Whether the VAT number format is valid according to country-specific rules",
 						"type": "`$BOOLEAN`",
 					},
 					map[string]any{
 						"name": "vat_number",
 						"req": true,
+						"short": "VAT number without country code prefix",
 						"type": "`$STRING`",
 					},
 					map[string]any{
 						"name": "vat_number_full",
 						"req": true,
+						"short": "Full VAT number including country code prefix",
 						"type": "`$STRING`",
 					},
 				},
@@ -134,44 +144,53 @@ func MakeConfig() map[string]any {
 					map[string]any{
 						"name": "checked_at",
 						"req": true,
+						"short": "Timestamp of the validation check",
 						"type": "`$STRING`",
 					},
 					map[string]any{
 						"name": "company_address",
+						"short": "Registered company address from VIES",
 						"type": "`$STRING`",
 					},
 					map[string]any{
 						"name": "company_name",
+						"short": "Registered company name from VIES",
 						"type": "`$STRING`",
 					},
 					map[string]any{
 						"name": "country_code",
 						"req": true,
+						"short": "Two-letter ISO country code",
 						"type": "`$STRING`",
 					},
 					map[string]any{
 						"name": "country_name",
 						"req": true,
+						"short": "Full country name",
 						"type": "`$STRING`",
 					},
 					map[string]any{
 						"name": "source",
 						"req": true,
+						"short": "Source of validation data",
 						"type": "`$STRING`",
 					},
 					map[string]any{
 						"name": "valid",
 						"req": true,
+						"short": "Whether the VAT number is valid according to VIES",
 						"type": "`$BOOLEAN`",
 					},
 					map[string]any{
 						"name": "vat_number",
 						"req": true,
+						"short": "VAT number without country code prefix",
 						"type": "`$STRING`",
 					},
 					map[string]any{
 						"name": "vat_number_full",
 						"req": true,
+						"short": "Full VAT number including country code prefix",
 						"type": "`$STRING`",
 					},
 				},
