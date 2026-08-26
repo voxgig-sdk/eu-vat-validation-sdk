@@ -28,6 +28,7 @@ module EuVatValidationConfig
           "options" => {
             "active" => false,
           },
+          "transport" => "base",
         },
       },
       "options" => {
