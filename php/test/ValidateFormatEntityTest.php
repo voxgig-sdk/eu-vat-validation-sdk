@@ -48,9 +48,13 @@ class ValidateFormatEntityTest extends TestCase
 
         // LOAD
         $validate_format_ref01_ent = $client->ValidateFormat(null);
-        $validate_format_ref01_match_dt0 = [];
+        $validate_format_ref01_match_dt0 = [
+            "id" => $validate_format_ref01_data["id"],
+        ];
         $validate_format_ref01_data_dt0_loaded = $validate_format_ref01_ent->load($validate_format_ref01_match_dt0, null);
-        $this->assertNotNull($validate_format_ref01_data_dt0_loaded);
+        $validate_format_ref01_data_dt0_load_result = Helpers::to_map(is_object($validate_format_ref01_data_dt0_loaded) && method_exists($validate_format_ref01_data_dt0_loaded, 'data_get') ? $validate_format_ref01_data_dt0_loaded->data_get() : $validate_format_ref01_data_dt0_loaded);
+        $this->assertNotNull($validate_format_ref01_data_dt0_load_result);
+        $this->assertEquals($validate_format_ref01_data_dt0_load_result["id"], $validate_format_ref01_data["id"]);
 
     }
 }
@@ -84,7 +88,7 @@ function validate_format_basic_setup($extra)
         "EU_VAT_VALIDATION_TEST_VALIDATE_FORMAT_ENTID" => $idmap,
         "EU_VAT_VALIDATION_TEST_LIVE" => "FALSE",
         "EU_VAT_VALIDATION_TEST_EXPLAIN" => "FALSE",
-        "EU_VAT_VALIDATION_APIKEY" => "NONE",
+        "EU_VAT_VALIDATION_APIKEY" => "",
     ]);
 
     $idmap_resolved = Helpers::to_map(
@@ -95,10 +99,17 @@ function validate_format_basic_setup($extra)
 
     if ($env["EU_VAT_VALIDATION_TEST_LIVE"] === "TRUE") {
         $merged_opts = Vs::merge([
+            // FIRST, so the generated fields below win: sdk-test-control.json's
+            // test.client.options adds to the live client, it does not redirect it.
+            Runner::live_client_options(),
             [
                 "apikey" => $env["EU_VAT_VALIDATION_APIKEY"],
             ],
-            $extra ?? [],
+            // ismap, not a plain "?? []" default: an empty PHP array is a
+            // LIST, and a non-map later entry REPLACES the accumulated map in
+            // merge - so the no-extras call discarded live_client_options()
+            // and the apikey/server map above it.
+            Vs::ismap($extra) ? $extra : new \stdClass(),
         ]);
         $client = new EuVatValidationSDK(Helpers::to_map($merged_opts));
     }

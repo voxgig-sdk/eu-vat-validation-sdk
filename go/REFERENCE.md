@@ -106,6 +106,7 @@ fmt.Println(validateFormat.GetName()) // "validate_format"
 | `checked_at` | `string` | Yes | Timestamp of the validation check |
 | `country_code` | `string` | Yes | Two-letter ISO country code |
 | `country_name` | `string` | Yes | Full country name |
+| `id` | `string` | No |  |
 | `source` | `string` | Yes | Source of validation |
 | `valid` | `bool` | Yes | Whether the VAT number format is valid according to country-specific rules |
 | `vat_number` | `string` | Yes | VAT number without country code prefix |
@@ -165,6 +166,7 @@ fmt.Println(vat.GetName()) // "vat"
 | `company_name` | `string` | No | Registered company name from VIES |
 | `country_code` | `string` | Yes | Two-letter ISO country code |
 | `country_name` | `string` | Yes | Full country name |
+| `id` | `string` | No |  |
 | `source` | `string` | Yes | Source of validation data |
 | `valid` | `bool` | Yes | Whether the VAT number is valid according to VIES |
 | `vat_number` | `string` | Yes | VAT number without country code prefix |

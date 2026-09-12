@@ -48,6 +48,7 @@ module EuVatValidationConfig
         "validate_format" => {
           "fields" => [
             {
+              "format" => "date-time",
               "name" => "checked_at",
               "req" => true,
               "short" => "Timestamp of the validation check",
@@ -63,6 +64,10 @@ module EuVatValidationConfig
               "name" => "country_name",
               "req" => true,
               "short" => "Full country name",
+              "type" => "`$STRING`",
+            },
+            {
+              "name" => "id",
               "type" => "`$STRING`",
             },
             {
@@ -90,6 +95,18 @@ module EuVatValidationConfig
               "type" => "`$STRING`",
             },
           ],
+          "id" => {
+            "field" => "id",
+            "from" => {
+              "country" => "country_name",
+            },
+            "name" => "id",
+            "parts" => [
+              "country",
+              "number",
+            ],
+            "sep" => "/",
+          },
           "name" => "validate_format",
           "op" => {
             "load" => {
@@ -120,11 +137,19 @@ module EuVatValidationConfig
                   "kind" => "http",
                   "method" => "GET",
                   "orig" => "/vat/validate-format/{country}/{number}",
-                  "parts" => [
-                    "vat",
-                    "validate-format",
-                    "{country}",
-                    "{number}",
+                  "segments" => [
+                    {
+                      "lit" => "vat",
+                    },
+                    {
+                      "lit" => "validate-format",
+                    },
+                    {
+                      "var" => "country",
+                    },
+                    {
+                      "var" => "number",
+                    },
                   ],
                   "select" => {
                     "exist" => [
@@ -136,6 +161,12 @@ module EuVatValidationConfig
                     "req" => "`reqdata`",
                     "res" => "`body`",
                   },
+                  "parts" => [
+                    "vat",
+                    "validate-format",
+                    "{country}",
+                    "{number}",
+                  ],
                 },
               ],
             },
@@ -151,6 +182,7 @@ module EuVatValidationConfig
         "vat" => {
           "fields" => [
             {
+              "format" => "date-time",
               "name" => "checked_at",
               "req" => true,
               "short" => "Timestamp of the validation check",
@@ -179,6 +211,10 @@ module EuVatValidationConfig
               "type" => "`$STRING`",
             },
             {
+              "name" => "id",
+              "type" => "`$STRING`",
+            },
+            {
               "name" => "source",
               "req" => true,
               "short" => "Source of validation data",
@@ -203,6 +239,18 @@ module EuVatValidationConfig
               "type" => "`$STRING`",
             },
           ],
+          "id" => {
+            "field" => "id",
+            "from" => {
+              "country" => "country_name",
+            },
+            "name" => "id",
+            "parts" => [
+              "country",
+              "number",
+            ],
+            "sep" => "/",
+          },
           "name" => "vat",
           "op" => {
             "load" => {
@@ -233,10 +281,16 @@ module EuVatValidationConfig
                   "kind" => "http",
                   "method" => "GET",
                   "orig" => "/vat/{country}/{number}",
-                  "parts" => [
-                    "vat",
-                    "{country}",
-                    "{number}",
+                  "segments" => [
+                    {
+                      "lit" => "vat",
+                    },
+                    {
+                      "var" => "country",
+                    },
+                    {
+                      "var" => "number",
+                    },
                   ],
                   "select" => {
                     "exist" => [
@@ -248,6 +302,11 @@ module EuVatValidationConfig
                     "req" => "`reqdata`",
                     "res" => "`body`",
                   },
+                  "parts" => [
+                    "vat",
+                    "{country}",
+                    "{number}",
+                  ],
                 },
               ],
             },

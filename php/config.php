@@ -62,6 +62,7 @@ class EuVatValidationConfig
         'validate_format' => [
           'fields' => [
             [
+              'format' => 'date-time',
               'name' => 'checked_at',
               'req' => true,
               'short' => 'Timestamp of the validation check',
@@ -77,6 +78,10 @@ class EuVatValidationConfig
               'name' => 'country_name',
               'req' => true,
               'short' => 'Full country name',
+              'type' => '`$STRING`',
+            ],
+            [
+              'name' => 'id',
               'type' => '`$STRING`',
             ],
             [
@@ -103,6 +108,18 @@ class EuVatValidationConfig
               'short' => 'Full VAT number including country code prefix',
               'type' => '`$STRING`',
             ],
+          ],
+          'id' => [
+            'field' => 'id',
+            'from' => [
+              'country' => 'country_name',
+            ],
+            'name' => 'id',
+            'parts' => [
+              'country',
+              'number',
+            ],
+            'sep' => '/',
           ],
           'name' => 'validate_format',
           'op' => [
@@ -134,11 +151,19 @@ class EuVatValidationConfig
                   'kind' => 'http',
                   'method' => 'GET',
                   'orig' => '/vat/validate-format/{country}/{number}',
-                  'parts' => [
-                    'vat',
-                    'validate-format',
-                    '{country}',
-                    '{number}',
+                  'segments' => [
+                    [
+                      'lit' => 'vat',
+                    ],
+                    [
+                      'lit' => 'validate-format',
+                    ],
+                    [
+                      'var' => 'country',
+                    ],
+                    [
+                      'var' => 'number',
+                    ],
                   ],
                   'select' => [
                     'exist' => [
@@ -149,6 +174,12 @@ class EuVatValidationConfig
                   'transform' => [
                     'req' => '`reqdata`',
                     'res' => '`body`',
+                  ],
+                  'parts' => [
+                    'vat',
+                    'validate-format',
+                    '{country}',
+                    '{number}',
                   ],
                 ],
               ],
@@ -165,6 +196,7 @@ class EuVatValidationConfig
         'vat' => [
           'fields' => [
             [
+              'format' => 'date-time',
               'name' => 'checked_at',
               'req' => true,
               'short' => 'Timestamp of the validation check',
@@ -193,6 +225,10 @@ class EuVatValidationConfig
               'type' => '`$STRING`',
             ],
             [
+              'name' => 'id',
+              'type' => '`$STRING`',
+            ],
+            [
               'name' => 'source',
               'req' => true,
               'short' => 'Source of validation data',
@@ -216,6 +252,18 @@ class EuVatValidationConfig
               'short' => 'Full VAT number including country code prefix',
               'type' => '`$STRING`',
             ],
+          ],
+          'id' => [
+            'field' => 'id',
+            'from' => [
+              'country' => 'country_name',
+            ],
+            'name' => 'id',
+            'parts' => [
+              'country',
+              'number',
+            ],
+            'sep' => '/',
           ],
           'name' => 'vat',
           'op' => [
@@ -247,10 +295,16 @@ class EuVatValidationConfig
                   'kind' => 'http',
                   'method' => 'GET',
                   'orig' => '/vat/{country}/{number}',
-                  'parts' => [
-                    'vat',
-                    '{country}',
-                    '{number}',
+                  'segments' => [
+                    [
+                      'lit' => 'vat',
+                    ],
+                    [
+                      'var' => 'country',
+                    ],
+                    [
+                      'var' => 'number',
+                    ],
                   ],
                   'select' => [
                     'exist' => [
@@ -261,6 +315,11 @@ class EuVatValidationConfig
                   'transform' => [
                     'req' => '`reqdata`',
                     'res' => '`body`',
+                  ],
+                  'parts' => [
+                    'vat',
+                    '{country}',
+                    '{number}',
                   ],
                 ],
               ],

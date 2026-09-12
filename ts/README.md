@@ -151,7 +151,7 @@ await entity.load({ country: 'example_country', number: 'example_number' })
 
 // Subsequent calls reuse the stored state
 const data = entity.data()
-console.log(data)
+console.log(data.id)
 ```
 
 ### Add custom middleware
@@ -299,6 +299,7 @@ The `prepare()` method returns:
 | `checked_at` | Timestamp of the validation check |
 | `country_code` | Two-letter ISO country code |
 | `country_name` | Full country name |
+| `id` |  |
 | `source` | Source of validation |
 | `valid` | Whether the VAT number format is valid according to country-specific rules |
 | `vat_number` | VAT number without country code prefix |
@@ -317,6 +318,7 @@ API path: `/vat/validate-format/{country}/{number}`
 | `company_name` | Registered company name from VIES |
 | `country_code` | Two-letter ISO country code |
 | `country_name` | Full country name |
+| `id` |  |
 | `source` | Source of validation data |
 | `valid` | Whether the VAT number is valid according to VIES |
 | `vat_number` | VAT number without country code prefix |
@@ -348,6 +350,7 @@ Create an instance: `const validate_format = client.ValidateFormat()`
 | `checked_at` | `string` | Timestamp of the validation check |
 | `country_code` | `string` | Two-letter ISO country code |
 | `country_name` | `string` | Full country name |
+| `id` | `string` |  |
 | `source` | `string` | Source of validation |
 | `valid` | `boolean` | Whether the VAT number format is valid according to country-specific rules |
 | `vat_number` | `string` | VAT number without country code prefix |
@@ -379,6 +382,7 @@ Create an instance: `const vat = client.Vat()`
 | `company_name` | `string` | Registered company name from VIES |
 | `country_code` | `string` | Two-letter ISO country code |
 | `country_name` | `string` | Full country name |
+| `id` | `string` |  |
 | `source` | `string` | Source of validation data |
 | `valid` | `boolean` | Whether the VAT number is valid according to VIES |
 | `vat_number` | `string` | VAT number without country code prefix |

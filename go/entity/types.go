@@ -17,6 +17,7 @@ type ValidateFormat struct {
 	CheckedAt string `json:"checked_at"`
 	CountryCode string `json:"country_code"`
 	CountryName string `json:"country_name"`
+	Id *string `json:"id,omitempty"`
 	Source string `json:"source"`
 	Valid bool `json:"valid"`
 	VatNumber string `json:"vat_number"`
@@ -36,6 +37,7 @@ type Vat struct {
 	CompanyName *string `json:"company_name,omitempty"`
 	CountryCode string `json:"country_code"`
 	CountryName string `json:"country_name"`
+	Id *string `json:"id,omitempty"`
 	Source string `json:"source"`
 	Valid bool `json:"valid"`
 	VatNumber string `json:"vat_number"`

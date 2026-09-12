@@ -6,6 +6,7 @@ main: kit: entity: vat: {
 
   fields: [
     {
+      format: "date-time"
       name: "checked_at"
       req: true
       short: "Timestamp of the validation check"
@@ -36,6 +37,11 @@ main: kit: entity: vat: {
       type: "`$STRING`"
     }
     {
+      name: "id"
+      req: false
+      type: "`$STRING`"
+    }
+    {
       name: "source"
       req: true
       short: "Source of validation data"
@@ -60,6 +66,19 @@ main: kit: entity: vat: {
       type: "`$STRING`"
     }
   ]
+
+  id: {
+    field: "id"
+    from: {
+      country: "country_name"
+    }
+    name: "id"
+    parts: [
+      "country"
+      "number"
+    ]
+    sep: "/"
+  }
 
   name: "vat"
   op: {
@@ -89,10 +108,16 @@ main: kit: entity: vat: {
           }
           method: "GET"
           orig: "/vat/{country}/{number}"
-          parts: [
-            "vat"
-            "{country}"
-            "{number}"
+          segments: [
+            {
+              lit: "vat"
+            }
+            {
+              var: "country"
+            }
+            {
+              var: "number"
+            }
           ]
           select: {
             exist: [

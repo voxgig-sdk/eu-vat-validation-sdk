@@ -101,6 +101,7 @@ validate_format = client.ValidateFormat
 | `checked_at` | `String` | Yes | Timestamp of the validation check |
 | `country_code` | `String` | Yes | Two-letter ISO country code |
 | `country_name` | `String` | Yes | Full country name |
+| `id` | `String` | No |  |
 | `source` | `String` | Yes | Source of validation |
 | `valid` | `Boolean` | Yes | Whether the VAT number format is valid according to country-specific rules |
 | `vat_number` | `String` | Yes | VAT number without country code prefix |
@@ -161,6 +162,7 @@ vat = client.Vat
 | `company_name` | `String` | No | Registered company name from VIES |
 | `country_code` | `String` | Yes | Two-letter ISO country code |
 | `country_name` | `String` | Yes | Full country name |
+| `id` | `String` | No |  |
 | `source` | `String` | Yes | Source of validation data |
 | `valid` | `Boolean` | Yes | Whether the VAT number is valid according to VIES |
 | `vat_number` | `String` | Yes | VAT number without country code prefix |

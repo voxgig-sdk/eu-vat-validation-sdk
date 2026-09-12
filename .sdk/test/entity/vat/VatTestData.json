@@ -2,61 +2,61 @@
   "existing": {
     "vat": {
       "VAT00": {
-        "checked_at": "s5a",
-        "company_address": "s5b",
-        "company_name": "s5c",
-        "country_code": "s5d",
-        "country_name": "s5e",
-        "source": "s5f",
-        "valid": true,
-        "vat_number": "s61",
-        "vat_number_full": "s62",
+        "checked_at": "s64",
+        "company_address": "s65",
+        "company_name": "s66",
+        "country_code": "s67",
+        "country_name": "s68",
+        "id": "VAT00",
+        "source": "s6a",
+        "valid": false,
+        "vat_number": "s6c",
+        "vat_number_full": "s6d",
         "country": "COUNTRY01",
-        "number": "NUMBER01",
-        "id": "VAT00"
+        "number": "NUMBER01"
       },
       "VAT01": {
-        "checked_at": "sb4",
-        "company_address": "sb5",
-        "company_name": "sb6",
-        "country_code": "sb7",
-        "country_name": "sb8",
-        "source": "sb9",
-        "valid": true,
-        "vat_number": "sbb",
-        "vat_number_full": "sbc",
+        "checked_at": "sc8",
+        "company_address": "sc9",
+        "company_name": "sca",
+        "country_code": "scb",
+        "country_name": "scc",
+        "id": "VAT01",
+        "source": "sce",
+        "valid": false,
+        "vat_number": "sd0",
+        "vat_number_full": "sd1",
         "country": "COUNTRY01",
-        "number": "NUMBER01",
-        "id": "VAT01"
+        "number": "NUMBER01"
       },
       "VAT02": {
-        "checked_at": "s10e",
-        "company_address": "s10f",
-        "company_name": "s110",
-        "country_code": "s111",
-        "country_name": "s112",
-        "source": "s113",
-        "valid": true,
-        "vat_number": "s115",
-        "vat_number_full": "s116",
+        "checked_at": "s12c",
+        "company_address": "s12d",
+        "company_name": "s12e",
+        "country_code": "s12f",
+        "country_name": "s130",
+        "id": "VAT02",
+        "source": "s132",
+        "valid": false,
+        "vat_number": "s134",
+        "vat_number_full": "s135",
         "country": "COUNTRY01",
-        "number": "NUMBER01",
-        "id": "VAT02"
+        "number": "NUMBER01"
       }
     }
   },
   "new": {
     "vat": {
       "vat_ref01": {
-        "checked_at": "s168",
-        "company_address": "s169",
-        "company_name": "s16a",
-        "country_code": "s16b",
-        "country_name": "s16c",
-        "source": "s16d",
-        "valid": true,
-        "vat_number": "s16f",
-        "vat_number_full": "s170"
+        "checked_at": "s190",
+        "company_address": "s191",
+        "company_name": "s192",
+        "country_code": "s193",
+        "country_name": "s194",
+        "source": "s196",
+        "valid": false,
+        "vat_number": "s198",
+        "vat_number_full": "s199"
       }
     }
   }

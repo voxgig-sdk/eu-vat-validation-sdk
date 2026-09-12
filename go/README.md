@@ -267,6 +267,7 @@ Only `Direct()` returns a response envelope — a `map[string]any` with
 | `"checked_at"` | Timestamp of the validation check |
 | `"country_code"` | Two-letter ISO country code |
 | `"country_name"` | Full country name |
+| `"id"` |  |
 | `"source"` | Source of validation |
 | `"valid"` | Whether the VAT number format is valid according to country-specific rules |
 | `"vat_number"` | VAT number without country code prefix |
@@ -285,6 +286,7 @@ API path: `/vat/validate-format/{country}/{number}`
 | `"company_name"` | Registered company name from VIES |
 | `"country_code"` | Two-letter ISO country code |
 | `"country_name"` | Full country name |
+| `"id"` |  |
 | `"source"` | Source of validation data |
 | `"valid"` | Whether the VAT number is valid according to VIES |
 | `"vat_number"` | VAT number without country code prefix |
@@ -316,6 +318,7 @@ Create an instance: `validateFormat := client.ValidateFormat(nil)`
 | `checked_at` | `string` | Timestamp of the validation check |
 | `country_code` | `string` | Two-letter ISO country code |
 | `country_name` | `string` | Full country name |
+| `id` | `string` |  |
 | `source` | `string` | Source of validation |
 | `valid` | `bool` | Whether the VAT number format is valid according to country-specific rules |
 | `vat_number` | `string` | VAT number without country code prefix |
@@ -351,6 +354,7 @@ Create an instance: `vat := client.Vat(nil)`
 | `company_name` | `string` | Registered company name from VIES |
 | `country_code` | `string` | Two-letter ISO country code |
 | `country_name` | `string` | Full country name |
+| `id` | `string` |  |
 | `source` | `string` | Source of validation data |
 | `valid` | `bool` | Whether the VAT number is valid according to VIES |
 | `vat_number` | `string` | VAT number without country code prefix |

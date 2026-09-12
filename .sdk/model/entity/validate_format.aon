@@ -6,6 +6,7 @@ main: kit: entity: validate_format: {
 
   fields: [
     {
+      format: "date-time"
       name: "checked_at"
       req: true
       short: "Timestamp of the validation check"
@@ -21,6 +22,11 @@ main: kit: entity: validate_format: {
       name: "country_name"
       req: true
       short: "Full country name"
+      type: "`$STRING`"
+    }
+    {
+      name: "id"
+      req: false
       type: "`$STRING`"
     }
     {
@@ -48,6 +54,19 @@ main: kit: entity: validate_format: {
       type: "`$STRING`"
     }
   ]
+
+  id: {
+    field: "id"
+    from: {
+      country: "country_name"
+    }
+    name: "id"
+    parts: [
+      "country"
+      "number"
+    ]
+    sep: "/"
+  }
 
   name: "validate_format"
   op: {
@@ -77,11 +96,19 @@ main: kit: entity: validate_format: {
           }
           method: "GET"
           orig: "/vat/validate-format/{country}/{number}"
-          parts: [
-            "vat"
-            "validate-format"
-            "{country}"
-            "{number}"
+          segments: [
+            {
+              lit: "vat"
+            }
+            {
+              lit: "validate-format"
+            }
+            {
+              var: "country"
+            }
+            {
+              var: "number"
+            }
           ]
           select: {
             exist: [

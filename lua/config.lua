@@ -36,6 +36,7 @@ local function make_config()
       ["validate_format"] = {
         ["fields"] = {
           {
+            ["format"] = "date-time",
             ["name"] = "checked_at",
             ["req"] = true,
             ["short"] = "Timestamp of the validation check",
@@ -51,6 +52,10 @@ local function make_config()
             ["name"] = "country_name",
             ["req"] = true,
             ["short"] = "Full country name",
+            ["type"] = "`$STRING`",
+          },
+          {
+            ["name"] = "id",
             ["type"] = "`$STRING`",
           },
           {
@@ -77,6 +82,18 @@ local function make_config()
             ["short"] = "Full VAT number including country code prefix",
             ["type"] = "`$STRING`",
           },
+        },
+        ["id"] = {
+          ["field"] = "id",
+          ["from"] = {
+            ["country"] = "country_name",
+          },
+          ["name"] = "id",
+          ["parts"] = {
+            "country",
+            "number",
+          },
+          ["sep"] = "/",
         },
         ["name"] = "validate_format",
         ["op"] = {
@@ -108,11 +125,19 @@ local function make_config()
                 ["kind"] = "http",
                 ["method"] = "GET",
                 ["orig"] = "/vat/validate-format/{country}/{number}",
-                ["parts"] = {
-                  "vat",
-                  "validate-format",
-                  "{country}",
-                  "{number}",
+                ["segments"] = {
+                  {
+                    ["lit"] = "vat",
+                  },
+                  {
+                    ["lit"] = "validate-format",
+                  },
+                  {
+                    ["var"] = "country",
+                  },
+                  {
+                    ["var"] = "number",
+                  },
                 },
                 ["select"] = {
                   ["exist"] = {
@@ -123,6 +148,12 @@ local function make_config()
                 ["transform"] = {
                   ["req"] = "`reqdata`",
                   ["res"] = "`body`",
+                },
+                ["parts"] = {
+                  "vat",
+                  "validate-format",
+                  "{country}",
+                  "{number}",
                 },
               },
             },
@@ -139,6 +170,7 @@ local function make_config()
       ["vat"] = {
         ["fields"] = {
           {
+            ["format"] = "date-time",
             ["name"] = "checked_at",
             ["req"] = true,
             ["short"] = "Timestamp of the validation check",
@@ -167,6 +199,10 @@ local function make_config()
             ["type"] = "`$STRING`",
           },
           {
+            ["name"] = "id",
+            ["type"] = "`$STRING`",
+          },
+          {
             ["name"] = "source",
             ["req"] = true,
             ["short"] = "Source of validation data",
@@ -190,6 +226,18 @@ local function make_config()
             ["short"] = "Full VAT number including country code prefix",
             ["type"] = "`$STRING`",
           },
+        },
+        ["id"] = {
+          ["field"] = "id",
+          ["from"] = {
+            ["country"] = "country_name",
+          },
+          ["name"] = "id",
+          ["parts"] = {
+            "country",
+            "number",
+          },
+          ["sep"] = "/",
         },
         ["name"] = "vat",
         ["op"] = {
@@ -221,10 +269,16 @@ local function make_config()
                 ["kind"] = "http",
                 ["method"] = "GET",
                 ["orig"] = "/vat/{country}/{number}",
-                ["parts"] = {
-                  "vat",
-                  "{country}",
-                  "{number}",
+                ["segments"] = {
+                  {
+                    ["lit"] = "vat",
+                  },
+                  {
+                    ["var"] = "country",
+                  },
+                  {
+                    ["var"] = "number",
+                  },
                 },
                 ["select"] = {
                   ["exist"] = {
@@ -235,6 +289,11 @@ local function make_config()
                 ["transform"] = {
                   ["req"] = "`reqdata`",
                   ["res"] = "`body`",
+                },
+                ["parts"] = {
+                  "vat",
+                  "{country}",
+                  "{number}",
                 },
               },
             },

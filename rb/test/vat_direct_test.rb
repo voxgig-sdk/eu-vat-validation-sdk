@@ -71,15 +71,17 @@ def vat_direct_setup(mockres)
   env = Runner.env_override({
     "EU_VAT_VALIDATION_TEST_VAT_ENTID" => {},
     "EU_VAT_VALIDATION_TEST_LIVE" => "FALSE",
-    "EU_VAT_VALIDATION_APIKEY" => "NONE",
+    "EU_VAT_VALIDATION_APIKEY" => "",
   })
 
   live = env["EU_VAT_VALIDATION_TEST_LIVE"] == "TRUE"
 
   if live
-    merged_opts = {
+    # Merged so the generated fields win: sdk-test-control.json's
+    # test.client.options adds to the live client, it does not redirect it.
+    merged_opts = Runner.live_client_options.merge({
       "apikey" => env["EU_VAT_VALIDATION_APIKEY"],
-    }
+    })
     client = EuVatValidationSDK.new(merged_opts)
     return {
       client: client,

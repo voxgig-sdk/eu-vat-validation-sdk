@@ -34,6 +34,7 @@
           "fields": [
             {
               "active": true,
+              "format": "date-time",
               "name": "checked_at",
               "req": true,
               "short": "Timestamp of the validation check",
@@ -51,6 +52,12 @@
               "name": "country_name",
               "req": true,
               "short": "Full country name",
+              "type": "`$STRING`"
+            },
+            {
+              "active": true,
+              "name": "id",
+              "req": false,
               "type": "`$STRING`"
             },
             {
@@ -82,6 +89,18 @@
               "type": "`$STRING`"
             }
           ],
+          "id": {
+            "field": "id",
+            "from": {
+              "country": "country_name"
+            },
+            "name": "id",
+            "parts": [
+              "country",
+              "number"
+            ],
+            "sep": "/"
+          },
           "name": "validate_format",
           "op": {
             "load": {
@@ -115,11 +134,19 @@
                   "kind": "http",
                   "method": "GET",
                   "orig": "/vat/validate-format/{country}/{number}",
-                  "parts": [
-                    "vat",
-                    "validate-format",
-                    "{country}",
-                    "{number}"
+                  "segments": [
+                    {
+                      "lit": "vat"
+                    },
+                    {
+                      "lit": "validate-format"
+                    },
+                    {
+                      "var": "country"
+                    },
+                    {
+                      "var": "number"
+                    }
                   ],
                   "select": {
                     "exist": [
@@ -151,6 +178,7 @@
           "fields": [
             {
               "active": true,
+              "format": "date-time",
               "name": "checked_at",
               "req": true,
               "short": "Timestamp of the validation check",
@@ -186,6 +214,12 @@
             },
             {
               "active": true,
+              "name": "id",
+              "req": false,
+              "type": "`$STRING`"
+            },
+            {
+              "active": true,
               "name": "source",
               "req": true,
               "short": "Source of validation data",
@@ -213,6 +247,18 @@
               "type": "`$STRING`"
             }
           ],
+          "id": {
+            "field": "id",
+            "from": {
+              "country": "country_name"
+            },
+            "name": "id",
+            "parts": [
+              "country",
+              "number"
+            ],
+            "sep": "/"
+          },
           "name": "vat",
           "op": {
             "load": {
@@ -246,10 +292,16 @@
                   "kind": "http",
                   "method": "GET",
                   "orig": "/vat/{country}/{number}",
-                  "parts": [
-                    "vat",
-                    "{country}",
-                    "{number}"
+                  "segments": [
+                    {
+                      "lit": "vat"
+                    },
+                    {
+                      "var": "country"
+                    },
+                    {
+                      "var": "number"
+                    }
                   ],
                   "select": {
                     "exist": [
@@ -338,8 +390,11 @@
             }
           },
           "name": "test",
+          "needs": {},
           "origname": "",
           "package": "@voxgig/sdkgen",
+          "plugin": {},
+          "spec": {},
           "target": {
             "go": {
               "deps": {}
@@ -504,6 +559,9 @@
             "sdkrel": ""
           },
           "package": "@voxgig/sdkgen",
+          "provides": {
+            "sekreto": true
+          },
           "publish": {
             "registry": {
               "active": false,
@@ -529,6 +587,10 @@
             "version": "0.0.1"
           },
           "srcfeature": false,
+          "superseded": [
+            "test/runner_test.go",
+            "test/struct_runner_test.go"
+          ],
           "title": "Golang"
         },
         "go-cli": {
@@ -580,6 +642,7 @@
               "active": false
             }
           },
+          "provides": {},
           "publish": {
             "registry": {
               "active": false,
@@ -604,6 +667,7 @@
             },
             "version": "0.0.1"
           },
+          "superseded": [],
           "title": "Go CLI"
         },
         "go-mcp": {
@@ -655,6 +719,7 @@
               "active": false
             }
           },
+          "provides": {},
           "publish": {
             "registry": {
               "active": false,
@@ -679,6 +744,7 @@
             },
             "version": "0.0.1"
           },
+          "superseded": [],
           "title": "Go MCP server"
         },
         "lua": {
@@ -719,6 +785,9 @@
             "sdkrel": ""
           },
           "package": "@voxgig/sdkgen",
+          "provides": {
+            "sekreto": true
+          },
           "publish": {
             "registry": {
               "active": false,
@@ -744,6 +813,9 @@
             "version": "0.0.1"
           },
           "srcfeature": false,
+          "superseded": [
+            "test/struct_runner.lua"
+          ],
           "title": "Lua"
         },
         "php": {
@@ -778,6 +850,9 @@
             "sdkrel": ""
           },
           "package": "@voxgig/sdkgen",
+          "provides": {
+            "sekreto": true
+          },
           "publish": {
             "registry": {
               "active": false,
@@ -803,6 +878,9 @@
             "version": "0.0.1"
           },
           "srcfeature": false,
+          "superseded": [
+            "test/StructRunner.php"
+          ],
           "title": "PHP"
         },
         "py": {
@@ -843,6 +921,9 @@
             "sdkrel": ""
           },
           "package": "@voxgig/sdkgen",
+          "provides": {
+            "sekreto": true
+          },
           "publish": {
             "registry": {
               "active": false,
@@ -868,6 +949,9 @@
             "version": "0.0.1"
           },
           "srcfeature": false,
+          "superseded": [
+            "test/struct_runner.py"
+          ],
           "title": "Python"
         },
         "rb": {
@@ -913,6 +997,9 @@
             "sdkrel": ""
           },
           "package": "@voxgig/sdkgen",
+          "provides": {
+            "sekreto": true
+          },
           "publish": {
             "registry": {
               "active": false,
@@ -938,6 +1025,9 @@
             "version": "0.0.1"
           },
           "srcfeature": false,
+          "superseded": [
+            "test/struct_runner.rb"
+          ],
           "title": "Ruby"
         },
         "ts": {
@@ -955,11 +1045,6 @@
               "active": true,
               "kind": "dev",
               "version": "^25.6.0"
-            },
-            "dotenv": {
-              "active": true,
-              "kind": "dev",
-              "version": "^17.4.2"
             },
             "typescript": {
               "active": true,
@@ -988,6 +1073,9 @@
             "sdkrel": ""
           },
           "package": "@voxgig/sdkgen",
+          "provides": {
+            "sekreto": true
+          },
           "publish": {
             "registry": {
               "active": false,
@@ -1012,6 +1100,14 @@
             },
             "version": "0.0.1"
           },
+          "superseded": [
+            "test/runner.ts",
+            "test/vendor/omni/compat.ts",
+            "src/feature/secrets/sekreto/Providers.ts",
+            "src/feature/secrets/sekreto/Sigv4.ts",
+            "src/feature/secrets/sekreto/provider/Registry.ts",
+            "src/feature/secrets/sekreto/provider/http.ts"
+          ],
           "title": "TypeScript"
         }
       },

@@ -19,6 +19,9 @@
 # @!attribute [rw] country_name
 #   @return [String]
 #
+# @!attribute [rw] id
+#   @return [String, nil]
+#
 # @!attribute [rw] source
 #   @return [String]
 #
@@ -34,6 +37,7 @@ ValidateFormat = Struct.new(
   :checked_at,
   :country_code,
   :country_name,
+  :id,
   :source,
   :valid,
   :vat_number,
@@ -71,6 +75,9 @@ ValidateFormatLoadMatch = Struct.new(
 # @!attribute [rw] country_name
 #   @return [String]
 #
+# @!attribute [rw] id
+#   @return [String, nil]
+#
 # @!attribute [rw] source
 #   @return [String]
 #
@@ -88,6 +95,7 @@ Vat = Struct.new(
   :company_name,
   :country_code,
   :country_name,
+  :id,
   :source,
   :valid,
   :vat_number,

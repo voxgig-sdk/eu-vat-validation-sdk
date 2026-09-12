@@ -16,7 +16,7 @@ from __future__ import annotations
 from typing import TypedDict, Any
 
 
-class ValidateFormat(TypedDict):
+class ValidateFormatRequired(TypedDict):
     checked_at: str
     country_code: str
     country_name: str
@@ -24,6 +24,10 @@ class ValidateFormat(TypedDict):
     valid: bool
     vat_number: str
     vat_number_full: str
+
+
+class ValidateFormat(ValidateFormatRequired, total=False):
+    id: str
 
 
 class ValidateFormatLoadMatch(TypedDict):
@@ -44,6 +48,7 @@ class VatRequired(TypedDict):
 class Vat(VatRequired, total=False):
     company_address: str
     company_name: str
+    id: str
 
 
 class VatLoadMatch(TypedDict):

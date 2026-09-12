@@ -251,6 +251,7 @@ On error, `ok` is `False` and `err` contains the error value.
 | `checked_at` | Timestamp of the validation check |
 | `country_code` | Two-letter ISO country code |
 | `country_name` | Full country name |
+| `id` |  |
 | `source` | Source of validation |
 | `valid` | Whether the VAT number format is valid according to country-specific rules |
 | `vat_number` | VAT number without country code prefix |
@@ -269,6 +270,7 @@ API path: `/vat/validate-format/{country}/{number}`
 | `company_name` | Registered company name from VIES |
 | `country_code` | Two-letter ISO country code |
 | `country_name` | Full country name |
+| `id` |  |
 | `source` | Source of validation data |
 | `valid` | Whether the VAT number is valid according to VIES |
 | `vat_number` | VAT number without country code prefix |
@@ -300,6 +302,7 @@ Create an instance: `validate_format = client.ValidateFormat()`
 | `checked_at` | `str` | Timestamp of the validation check |
 | `country_code` | `str` | Two-letter ISO country code |
 | `country_name` | `str` | Full country name |
+| `id` | `str` |  |
 | `source` | `str` | Source of validation |
 | `valid` | `bool` | Whether the VAT number format is valid according to country-specific rules |
 | `vat_number` | `str` | VAT number without country code prefix |
@@ -331,6 +334,7 @@ Create an instance: `vat = client.Vat()`
 | `company_name` | `str` | Registered company name from VIES |
 | `country_code` | `str` | Two-letter ISO country code |
 | `country_name` | `str` | Full country name |
+| `id` | `str` |  |
 | `source` | `str` | Source of validation data |
 | `valid` | `bool` | Whether the VAT number is valid according to VIES |
 | `vat_number` | `str` | VAT number without country code prefix |

@@ -50,7 +50,7 @@ func TestVatEntity(t *testing.T) {
 		client := setup.client
 
 		// Bootstrap entity data from existing test data (no create step in flow).
-		vatRef01DataRaw := vs.Items(core.ToMapAny(vs.GetPath("existing.vat", setup.data)))
+		vatRef01DataRaw := vs.Items(core.ToMapAny(vs.GetPath(setup.data, "existing.vat")))
 		var vatRef01Data map[string]any
 		if len(vatRef01DataRaw) > 0 {
 			vatRef01Data = core.ToMapAny(vatRef01DataRaw[0][1])
@@ -61,13 +61,19 @@ func TestVatEntity(t *testing.T) {
 
 		// LOAD
 		vatRef01Ent := client.Vat(nil)
-		vatRef01MatchDt0 := map[string]any{}
+		vatRef01MatchDt0 := map[string]any{
+			"id": vatRef01Data["id"],
+		}
 		vatRef01DataDt0Loaded, err := vatRef01Ent.Load(vatRef01MatchDt0, nil)
 		if err != nil {
 			t.Fatalf("load failed: %v", err)
 		}
-		if vatRef01DataDt0Loaded == nil {
-			t.Fatal("expected load result to be non-nil")
+		vatRef01DataDt0LoadResult := core.ToMapAny(entityData(vatRef01DataDt0Loaded))
+		if vatRef01DataDt0LoadResult == nil {
+			t.Fatal("expected load result to be a map")
+		}
+		if vatRef01DataDt0LoadResult["id"] != vatRef01Data["id"] {
+			t.Fatal("expected load result id to match")
 		}
 
 	})
@@ -97,7 +103,7 @@ func vatBasicSetup(extra map[string]any) *entityTestSetup {
 	client := sdk.TestSDK(options, extra)
 
 	// Generate idmap via transform, matching TS pattern.
-	idmap := vs.Transform(
+	idmap, _ := vs.Transform(
 		[]any{"vat01", "vat02", "vat03", "country01"},
 		map[string]any{
 			"`$PACK`": []any{"", map[string]any{
@@ -117,7 +123,7 @@ func vatBasicSetup(extra map[string]any) *entityTestSetup {
 		"EU_VAT_VALIDATION_TEST_VAT_ENTID": idmap,
 		"EU_VAT_VALIDATION_TEST_LIVE":      "FALSE",
 		"EU_VAT_VALIDATION_TEST_EXPLAIN":   "FALSE",
-		"EU_VAT_VALIDATION_APIKEY":         "NONE",
+		"EU_VAT_VALIDATION_APIKEY":         "",
 	})
 
 	idmapResolved := core.ToMapAny(env["EU_VAT_VALIDATION_TEST_VAT_ENTID"])
@@ -126,11 +132,23 @@ func vatBasicSetup(extra map[string]any) *entityTestSetup {
 	}
 
 	if env["EU_VAT_VALIDATION_TEST_LIVE"] == "TRUE" {
+		// An empty map, not a nil one: Merge returns nil when its last entry
+		// is nil, and BasicSetup is normally called with no extras - so a
+		// bare nil silently discarded the apikey and server values below.
+		extraOpts := extra
+		if extraOpts == nil {
+			extraOpts = map[string]any{}
+		}
+
 		mergedOpts := vs.Merge([]any{
+			// liveClientOptions() FIRST, so the generated fields below win:
+			// sdk-test-control.json's test.client.options adds to the live
+			// client, it does not redirect it.
+			liveClientOptions(),
 			map[string]any{
 				"apikey": env["EU_VAT_VALIDATION_APIKEY"],
 			},
-			extra,
+			extraOpts,
 		})
 		client = sdk.NewEuVatValidationSDK(core.ToMapAny(mergedOpts))
 	}

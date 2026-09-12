@@ -18,6 +18,7 @@ class ValidateFormat
     public string $checked_at;
     public string $country_code;
     public string $country_name;
+    public ?string $id = null;
     public string $source;
     public bool $valid;
     public string $vat_number;
@@ -39,6 +40,7 @@ class Vat
     public ?string $company_name = null;
     public string $country_code;
     public string $country_name;
+    public ?string $id = null;
     public string $source;
     public bool $valid;
     public string $vat_number;

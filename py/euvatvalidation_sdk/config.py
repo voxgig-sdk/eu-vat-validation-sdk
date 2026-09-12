@@ -1,6 +1,14 @@
 # EuVatValidation SDK configuration
 
 
+# The sekreto plugin DEFINITIONS the model selected per feature, imported
+# above by name from the modules the catalogue's active `plugin.def`
+# entries declare. Handed to each feature (secrets builds its Sekreto
+# with them): a provider kind not listed here is unknown to that SDK.
+FEATURE_PLUGINS = {
+}
+
+
 _shared_config = None
 
 
@@ -57,6 +65,7 @@ def make_config():
       "validate_format": {
         "fields": [
           {
+            "format": "date-time",
             "name": "checked_at",
             "req": True,
             "short": "Timestamp of the validation check",
@@ -72,6 +81,10 @@ def make_config():
             "name": "country_name",
             "req": True,
             "short": "Full country name",
+            "type": "`$STRING`",
+          },
+          {
+            "name": "id",
             "type": "`$STRING`",
           },
           {
@@ -99,6 +112,18 @@ def make_config():
             "type": "`$STRING`",
           },
         ],
+        "id": {
+          "field": "id",
+          "from": {
+            "country": "country_name",
+          },
+          "name": "id",
+          "parts": [
+            "country",
+            "number",
+          ],
+          "sep": "/",
+        },
         "name": "validate_format",
         "op": {
           "load": {
@@ -129,11 +154,19 @@ def make_config():
                 "kind": "http",
                 "method": "GET",
                 "orig": "/vat/validate-format/{country}/{number}",
-                "parts": [
-                  "vat",
-                  "validate-format",
-                  "{country}",
-                  "{number}",
+                "segments": [
+                  {
+                    "lit": "vat",
+                  },
+                  {
+                    "lit": "validate-format",
+                  },
+                  {
+                    "var": "country",
+                  },
+                  {
+                    "var": "number",
+                  },
                 ],
                 "select": {
                   "exist": [
@@ -145,6 +178,12 @@ def make_config():
                   "req": "`reqdata`",
                   "res": "`body`",
                 },
+                "parts": [
+                  "vat",
+                  "validate-format",
+                  "{country}",
+                  "{number}",
+                ],
               },
             ],
           },
@@ -160,6 +199,7 @@ def make_config():
       "vat": {
         "fields": [
           {
+            "format": "date-time",
             "name": "checked_at",
             "req": True,
             "short": "Timestamp of the validation check",
@@ -188,6 +228,10 @@ def make_config():
             "type": "`$STRING`",
           },
           {
+            "name": "id",
+            "type": "`$STRING`",
+          },
+          {
             "name": "source",
             "req": True,
             "short": "Source of validation data",
@@ -212,6 +256,18 @@ def make_config():
             "type": "`$STRING`",
           },
         ],
+        "id": {
+          "field": "id",
+          "from": {
+            "country": "country_name",
+          },
+          "name": "id",
+          "parts": [
+            "country",
+            "number",
+          ],
+          "sep": "/",
+        },
         "name": "vat",
         "op": {
           "load": {
@@ -242,10 +298,16 @@ def make_config():
                 "kind": "http",
                 "method": "GET",
                 "orig": "/vat/{country}/{number}",
-                "parts": [
-                  "vat",
-                  "{country}",
-                  "{number}",
+                "segments": [
+                  {
+                    "lit": "vat",
+                  },
+                  {
+                    "var": "country",
+                  },
+                  {
+                    "var": "number",
+                  },
                 ],
                 "select": {
                   "exist": [
@@ -257,6 +319,11 @@ def make_config():
                   "req": "`reqdata`",
                   "res": "`body`",
                 },
+                "parts": [
+                  "vat",
+                  "{country}",
+                  "{number}",
+                ],
               },
             ],
           },

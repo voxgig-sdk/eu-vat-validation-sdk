@@ -245,6 +245,7 @@ returns a result `Hash` with these keys:
 | `checked_at` | Timestamp of the validation check |
 | `country_code` | Two-letter ISO country code |
 | `country_name` | Full country name |
+| `id` |  |
 | `source` | Source of validation |
 | `valid` | Whether the VAT number format is valid according to country-specific rules |
 | `vat_number` | VAT number without country code prefix |
@@ -263,6 +264,7 @@ API path: `/vat/validate-format/{country}/{number}`
 | `company_name` | Registered company name from VIES |
 | `country_code` | Two-letter ISO country code |
 | `country_name` | Full country name |
+| `id` |  |
 | `source` | Source of validation data |
 | `valid` | Whether the VAT number is valid according to VIES |
 | `vat_number` | VAT number without country code prefix |
@@ -294,6 +296,7 @@ Create an instance: `validate_format = client.ValidateFormat`
 | `checked_at` | `String` | Timestamp of the validation check |
 | `country_code` | `String` | Two-letter ISO country code |
 | `country_name` | `String` | Full country name |
+| `id` | `String` |  |
 | `source` | `String` | Source of validation |
 | `valid` | `Boolean` | Whether the VAT number format is valid according to country-specific rules |
 | `vat_number` | `String` | VAT number without country code prefix |
@@ -326,6 +329,7 @@ Create an instance: `vat = client.Vat`
 | `company_name` | `String` | Registered company name from VIES |
 | `country_code` | `String` | Two-letter ISO country code |
 | `country_name` | `String` | Full country name |
+| `id` | `String` |  |
 | `source` | `String` | Source of validation data |
 | `valid` | `Boolean` | Whether the VAT number is valid according to VIES |
 | `vat_number` | `String` | VAT number without country code prefix |

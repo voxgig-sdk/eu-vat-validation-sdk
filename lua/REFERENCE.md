@@ -98,6 +98,7 @@ local validate_format = client:ValidateFormat(nil)
 | `checked_at` | `string` | Yes | Timestamp of the validation check |
 | `country_code` | `string` | Yes | Two-letter ISO country code |
 | `country_name` | `string` | Yes | Full country name |
+| `id` | `string` | No |  |
 | `source` | `string` | Yes | Source of validation |
 | `valid` | `boolean` | Yes | Whether the VAT number format is valid according to country-specific rules |
 | `vat_number` | `string` | Yes | VAT number without country code prefix |
@@ -158,6 +159,7 @@ local vat = client:Vat(nil)
 | `company_name` | `string` | No | Registered company name from VIES |
 | `country_code` | `string` | Yes | Two-letter ISO country code |
 | `country_name` | `string` | Yes | Full country name |
+| `id` | `string` | No |  |
 | `source` | `string` | Yes | Source of validation data |
 | `valid` | `boolean` | Yes | Whether the VAT number is valid according to VIES |
 | `vat_number` | `string` | Yes | VAT number without country code prefix |

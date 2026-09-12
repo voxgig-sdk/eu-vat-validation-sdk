@@ -44,10 +44,14 @@ describe("VatEntity", function()
 
     -- LOAD
     local vat_ref01_ent = client:Vat(nil)
-    local vat_ref01_match_dt0 = {}
+    local vat_ref01_match_dt0 = {
+      id = vat_ref01_data["id"],
+    }
     local vat_ref01_data_dt0_loaded, err = vat_ref01_ent:load(vat_ref01_match_dt0, nil)
     assert.is_nil(err)
-    assert.is_not_nil(vat_ref01_data_dt0_loaded)
+    local vat_ref01_data_dt0_load_result = helpers.to_map(type(vat_ref01_data_dt0_loaded) == 'table' and vat_ref01_data_dt0_loaded.data_get and vat_ref01_data_dt0_loaded:data_get() or vat_ref01_data_dt0_loaded)
+    assert.is_not_nil(vat_ref01_data_dt0_load_result)
+    assert.are.equal(vat_ref01_data_dt0_load_result["id"], vat_ref01_data["id"])
 
   end)
 end)
@@ -91,7 +95,7 @@ function vat_basic_setup(extra)
     ["EU_VAT_VALIDATION_TEST_VAT_ENTID"] = idmap,
     ["EU_VAT_VALIDATION_TEST_LIVE"] = "FALSE",
     ["EU_VAT_VALIDATION_TEST_EXPLAIN"] = "FALSE",
-    ["EU_VAT_VALIDATION_APIKEY"] = "NONE",
+    ["EU_VAT_VALIDATION_APIKEY"] = "",
   })
 
   local idmap_resolved = helpers.to_map(
@@ -102,6 +106,9 @@ function vat_basic_setup(extra)
 
   if env["EU_VAT_VALIDATION_TEST_LIVE"] == "TRUE" then
     local merged_opts = vs.merge({
+      -- FIRST, so the generated fields below win: sdk-test-control.json's
+      -- test.client.options adds to the live client, it does not redirect it.
+      runner.live_client_options(),
       {
         apikey = env["EU_VAT_VALIDATION_APIKEY"],
       },

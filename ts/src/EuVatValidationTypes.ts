@@ -9,6 +9,7 @@ export interface ValidateFormat {
   checked_at: string
   country_code: string
   country_name: string
+  id?: string
   source: string
   valid: boolean
   vat_number: string
@@ -26,6 +27,7 @@ export interface Vat {
   company_name?: string
   country_code: string
   country_name: string
+  id?: string
   source: string
   valid: boolean
   vat_number: string

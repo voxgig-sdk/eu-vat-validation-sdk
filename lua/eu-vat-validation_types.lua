@@ -10,6 +10,7 @@
 ---@field checked_at string
 ---@field country_code string
 ---@field country_name string
+---@field id? string
 ---@field source string
 ---@field valid boolean
 ---@field vat_number string
@@ -25,6 +26,7 @@
 ---@field company_name? string
 ---@field country_code string
 ---@field country_name string
+---@field id? string
 ---@field source string
 ---@field valid boolean
 ---@field vat_number string

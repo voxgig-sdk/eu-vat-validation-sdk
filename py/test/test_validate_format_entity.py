@@ -48,9 +48,13 @@ class TestValidateFormatEntity:
 
         # LOAD
         validate_format_ref01_ent = client.ValidateFormat(None)
-        validate_format_ref01_match_dt0 = {}
+        validate_format_ref01_match_dt0 = {
+            "id": validate_format_ref01_data["id"],
+        }
         validate_format_ref01_data_dt0_loaded = validate_format_ref01_ent.load(validate_format_ref01_match_dt0, None)
-        assert validate_format_ref01_data_dt0_loaded is not None
+        validate_format_ref01_data_dt0_load_result = helpers.to_map(runner.entity_data(validate_format_ref01_data_dt0_loaded))
+        assert validate_format_ref01_data_dt0_load_result is not None
+        assert validate_format_ref01_data_dt0_load_result["id"] == validate_format_ref01_data["id"]
 
 
 
@@ -90,7 +94,7 @@ def _validate_format_basic_setup(extra):
         "EU_VAT_VALIDATION_TEST_VALIDATE_FORMAT_ENTID": idmap,
         "EU_VAT_VALIDATION_TEST_LIVE": "FALSE",
         "EU_VAT_VALIDATION_TEST_EXPLAIN": "FALSE",
-        "EU_VAT_VALIDATION_APIKEY": "NONE",
+        "EU_VAT_VALIDATION_APIKEY": "",
     })
 
     idmap_resolved = helpers.to_map(
@@ -100,6 +104,10 @@ def _validate_format_basic_setup(extra):
 
     if env.get("EU_VAT_VALIDATION_TEST_LIVE") == "TRUE":
         merged_opts = vs.merge([
+            # FIRST, so the generated fields below win: sdk-test-control.json's
+            # test.client.options adds to the live client, it does not
+            # redirect it.
+            runner.live_client_options(),
             {
                 "apikey": env.get("EU_VAT_VALIDATION_APIKEY"),
             },

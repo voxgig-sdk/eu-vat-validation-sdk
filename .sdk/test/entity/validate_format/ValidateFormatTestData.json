@@ -2,53 +2,53 @@
   "existing": {
     "validate_format": {
       "VALIDATE_FORMAT00": {
-        "checked_at": "s46",
-        "country_code": "s47",
-        "country_name": "s48",
-        "source": "s49",
-        "valid": true,
-        "vat_number": "s4b",
-        "vat_number_full": "s4c",
+        "checked_at": "s50",
+        "country_code": "s51",
+        "country_name": "s52",
+        "id": "VALIDATE_FORMAT00",
+        "source": "s54",
+        "valid": false,
+        "vat_number": "s56",
+        "vat_number_full": "s57",
         "country": "COUNTRY01",
-        "number": "NUMBER01",
-        "id": "VALIDATE_FORMAT00"
+        "number": "NUMBER01"
       },
       "VALIDATE_FORMAT01": {
-        "checked_at": "s8c",
-        "country_code": "s8d",
-        "country_name": "s8e",
-        "source": "s8f",
-        "valid": true,
-        "vat_number": "s91",
-        "vat_number_full": "s92",
+        "checked_at": "sa0",
+        "country_code": "sa1",
+        "country_name": "sa2",
+        "id": "VALIDATE_FORMAT01",
+        "source": "sa4",
+        "valid": false,
+        "vat_number": "sa6",
+        "vat_number_full": "sa7",
         "country": "COUNTRY01",
-        "number": "NUMBER01",
-        "id": "VALIDATE_FORMAT01"
+        "number": "NUMBER01"
       },
       "VALIDATE_FORMAT02": {
-        "checked_at": "sd2",
-        "country_code": "sd3",
-        "country_name": "sd4",
-        "source": "sd5",
-        "valid": true,
-        "vat_number": "sd7",
-        "vat_number_full": "sd8",
+        "checked_at": "sf0",
+        "country_code": "sf1",
+        "country_name": "sf2",
+        "id": "VALIDATE_FORMAT02",
+        "source": "sf4",
+        "valid": false,
+        "vat_number": "sf6",
+        "vat_number_full": "sf7",
         "country": "COUNTRY01",
-        "number": "NUMBER01",
-        "id": "VALIDATE_FORMAT02"
+        "number": "NUMBER01"
       }
     }
   },
   "new": {
     "validate_format": {
       "validate_format_ref01": {
-        "checked_at": "s118",
-        "country_code": "s119",
-        "country_name": "s11a",
-        "source": "s11b",
-        "valid": true,
-        "vat_number": "s11d",
-        "vat_number_full": "s11e"
+        "checked_at": "s140",
+        "country_code": "s141",
+        "country_name": "s142",
+        "source": "s144",
+        "valid": false,
+        "vat_number": "s146",
+        "vat_number_full": "s147"
       }
     }
   }

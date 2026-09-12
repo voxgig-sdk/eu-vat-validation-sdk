@@ -10,6 +10,17 @@ const FEATURE_CLASS: Record<string, typeof BaseFeature> = {
 }
 
 
+// Per-feature plugin DEFINITIONS (voxgig/plugin `Definition` values), from
+// the model's active plugin groups. A feature that takes a `plugins` option
+// (secrets over sekreto) reads its own entry; a feature with no plugins has
+// none. Named imports above make each definition statically reachable, so
+// an SDK carries exactly the plugin modules its model selects — the same
+// leanness the old side-effect registry imports bought, without a registry.
+const FEATURE_PLUGINS: Record<string, any[]> = {
+  
+}
+
+
 class Config {
 
   makeFeature(this: any, fn: string) {
@@ -74,6 +85,7 @@ class Config {
     "validate_format": {
       "fields": [
         {
+          "format": "date-time",
           "name": "checked_at",
           "req": true,
           "short": "Timestamp of the validation check",
@@ -89,6 +101,10 @@ class Config {
           "name": "country_name",
           "req": true,
           "short": "Full country name",
+          "type": "`$STRING`"
+        },
+        {
+          "name": "id",
           "type": "`$STRING`"
         },
         {
@@ -116,6 +132,18 @@ class Config {
           "type": "`$STRING`"
         }
       ],
+      "id": {
+        "field": "id",
+        "from": {
+          "country": "country_name"
+        },
+        "name": "id",
+        "parts": [
+          "country",
+          "number"
+        ],
+        "sep": "/"
+      },
       "name": "validate_format",
       "op": {
         "load": {
@@ -146,11 +174,19 @@ class Config {
               "kind": "http",
               "method": "GET",
               "orig": "/vat/validate-format/{country}/{number}",
-              "parts": [
-                "vat",
-                "validate-format",
-                "{country}",
-                "{number}"
+              "segments": [
+                {
+                  "lit": "vat"
+                },
+                {
+                  "lit": "validate-format"
+                },
+                {
+                  "var": "country"
+                },
+                {
+                  "var": "number"
+                }
               ],
               "select": {
                 "exist": [
@@ -161,7 +197,13 @@ class Config {
               "transform": {
                 "req": "`reqdata`",
                 "res": "`body`"
-              }
+              },
+              "parts": [
+                "vat",
+                "validate-format",
+                "{country}",
+                "{number}"
+              ]
             }
           ]
         }
@@ -177,6 +219,7 @@ class Config {
     "vat": {
       "fields": [
         {
+          "format": "date-time",
           "name": "checked_at",
           "req": true,
           "short": "Timestamp of the validation check",
@@ -205,6 +248,10 @@ class Config {
           "type": "`$STRING`"
         },
         {
+          "name": "id",
+          "type": "`$STRING`"
+        },
+        {
           "name": "source",
           "req": true,
           "short": "Source of validation data",
@@ -229,6 +276,18 @@ class Config {
           "type": "`$STRING`"
         }
       ],
+      "id": {
+        "field": "id",
+        "from": {
+          "country": "country_name"
+        },
+        "name": "id",
+        "parts": [
+          "country",
+          "number"
+        ],
+        "sep": "/"
+      },
       "name": "vat",
       "op": {
         "load": {
@@ -259,10 +318,16 @@ class Config {
               "kind": "http",
               "method": "GET",
               "orig": "/vat/{country}/{number}",
-              "parts": [
-                "vat",
-                "{country}",
-                "{number}"
+              "segments": [
+                {
+                  "lit": "vat"
+                },
+                {
+                  "var": "country"
+                },
+                {
+                  "var": "number"
+                }
               ],
               "select": {
                 "exist": [
@@ -273,7 +338,12 @@ class Config {
               "transform": {
                 "req": "`reqdata`",
                 "res": "`body`"
-              }
+              },
+              "parts": [
+                "vat",
+                "{country}",
+                "{number}"
+              ]
             }
           ]
         }
@@ -293,6 +363,7 @@ class Config {
 const config = new Config()
 
 export {
-  config
+  config,
+  FEATURE_PLUGINS,
 }
 

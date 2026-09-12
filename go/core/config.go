@@ -40,6 +40,7 @@ func MakeConfig() map[string]any {
 			"validate_format": map[string]any{
 				"fields": []any{
 					map[string]any{
+						"format": "date-time",
 						"name": "checked_at",
 						"req": true,
 						"short": "Timestamp of the validation check",
@@ -55,6 +56,10 @@ func MakeConfig() map[string]any {
 						"name": "country_name",
 						"req": true,
 						"short": "Full country name",
+						"type": "`$STRING`",
+					},
+					map[string]any{
+						"name": "id",
 						"type": "`$STRING`",
 					},
 					map[string]any{
@@ -81,6 +86,18 @@ func MakeConfig() map[string]any {
 						"short": "Full VAT number including country code prefix",
 						"type": "`$STRING`",
 					},
+				},
+				"id": map[string]any{
+					"field": "id",
+					"from": map[string]any{
+						"country": "country_name",
+					},
+					"name": "id",
+					"parts": []any{
+						"country",
+						"number",
+					},
+					"sep": "/",
 				},
 				"name": "validate_format",
 				"op": map[string]any{
@@ -112,11 +129,19 @@ func MakeConfig() map[string]any {
 								"kind": "http",
 								"method": "GET",
 								"orig": "/vat/validate-format/{country}/{number}",
-								"parts": []any{
-									"vat",
-									"validate-format",
-									"{country}",
-									"{number}",
+								"segments": []any{
+									map[string]any{
+										"lit": "vat",
+									},
+									map[string]any{
+										"lit": "validate-format",
+									},
+									map[string]any{
+										"var": "country",
+									},
+									map[string]any{
+										"var": "number",
+									},
 								},
 								"select": map[string]any{
 									"exist": []any{
@@ -127,6 +152,12 @@ func MakeConfig() map[string]any {
 								"transform": map[string]any{
 									"req": "`reqdata`",
 									"res": "`body`",
+								},
+								"parts": []any{
+									"vat",
+									"validate-format",
+									"{country}",
+									"{number}",
 								},
 							},
 						},
@@ -143,6 +174,7 @@ func MakeConfig() map[string]any {
 			"vat": map[string]any{
 				"fields": []any{
 					map[string]any{
+						"format": "date-time",
 						"name": "checked_at",
 						"req": true,
 						"short": "Timestamp of the validation check",
@@ -171,6 +203,10 @@ func MakeConfig() map[string]any {
 						"type": "`$STRING`",
 					},
 					map[string]any{
+						"name": "id",
+						"type": "`$STRING`",
+					},
+					map[string]any{
 						"name": "source",
 						"req": true,
 						"short": "Source of validation data",
@@ -194,6 +230,18 @@ func MakeConfig() map[string]any {
 						"short": "Full VAT number including country code prefix",
 						"type": "`$STRING`",
 					},
+				},
+				"id": map[string]any{
+					"field": "id",
+					"from": map[string]any{
+						"country": "country_name",
+					},
+					"name": "id",
+					"parts": []any{
+						"country",
+						"number",
+					},
+					"sep": "/",
 				},
 				"name": "vat",
 				"op": map[string]any{
@@ -225,10 +273,16 @@ func MakeConfig() map[string]any {
 								"kind": "http",
 								"method": "GET",
 								"orig": "/vat/{country}/{number}",
-								"parts": []any{
-									"vat",
-									"{country}",
-									"{number}",
+								"segments": []any{
+									map[string]any{
+										"lit": "vat",
+									},
+									map[string]any{
+										"var": "country",
+									},
+									map[string]any{
+										"var": "number",
+									},
 								},
 								"select": map[string]any{
 									"exist": []any{
@@ -239,6 +293,11 @@ func MakeConfig() map[string]any {
 								"transform": map[string]any{
 									"req": "`reqdata`",
 									"res": "`body`",
+								},
+								"parts": []any{
+									"vat",
+									"{country}",
+									"{number}",
 								},
 							},
 						},
@@ -254,6 +313,17 @@ func MakeConfig() map[string]any {
 			},
 		},
 	}
+}
+
+// The plugin definitions the model selected per feature, as []any so a
+// feature package can consume them without core naming its types. Empty
+// when no active feature declares active plugin groups for this target.
+var featurePlugins = map[string][]any{
+}
+
+// FeaturePlugins is the definitions list for one feature's chain.
+func FeaturePlugins(name string) []any {
+	return featurePlugins[name]
 }
 
 var (
