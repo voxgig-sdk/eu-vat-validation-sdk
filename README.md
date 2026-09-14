@@ -105,7 +105,7 @@ local result, err = client:ValidateFormat():load({ country = "example", number =
 
 | Language | Package | Install |
 | --- | --- | --- |
-| TypeScript | `@voxgig-sdk/eu-vat-validation` | publish pending — [install from git tag](https://github.com/voxgig-sdk/eu-vat-validation-sdk/releases) |
+| TypeScript | `@voxgig-sdk/eu-vat-validation-sdk` | publish pending — [install from git tag](https://github.com/voxgig-sdk/eu-vat-validation-sdk/releases) |
 | Python | `voxgig-sdk-eu-vat-validation` | publish pending — [install from git tag](https://github.com/voxgig-sdk/eu-vat-validation-sdk/releases) |
 | PHP | `voxgig-sdk/eu-vat-validation` | publish pending — [install from git tag](https://github.com/voxgig-sdk/eu-vat-validation-sdk/releases) |
 | Golang | `github.com/voxgig-sdk/eu-vat-validation-sdk/go` | `go get github.com/voxgig-sdk/eu-vat-validation-sdk/go@latest` |
@@ -119,7 +119,7 @@ local result, err = client:ValidateFormat():load({ country = "example", number =
 ### TypeScript
 
 ```ts
-import { EuVatValidationSDK } from '@voxgig-sdk/eu-vat-validation'
+import { EuVatValidationSDK } from '@voxgig-sdk/eu-vat-validation-sdk'
 
 const client = new EuVatValidationSDK({
   apikey: process.env.EU_VAT_VALIDATION_APIKEY,

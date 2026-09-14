@@ -28,7 +28,7 @@ loading a specific record.
 ### 1. Create a client
 
 ```ts
-import { EuVatValidationSDK } from '@voxgig-sdk/eu-vat-validation'
+import { EuVatValidationSDK } from '@voxgig-sdk/eu-vat-validation-sdk'
 
 const client = new EuVatValidationSDK({
   apikey: process.env.EU_VAT_VALIDATION_APIKEY,
@@ -477,7 +477,7 @@ eu-vat-validation/
 Import the SDK from the package root:
 
 ```ts
-import { EuVatValidationSDK } from '@voxgig-sdk/eu-vat-validation'
+import { EuVatValidationSDK } from '@voxgig-sdk/eu-vat-validation-sdk'
 ```
 
 ### Entity state
