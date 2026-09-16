@@ -1,12 +1,18 @@
 # EuVatValidation SDK feature factory
 
 from euvatvalidation_sdk.feature.base_feature import EuVatValidationBaseFeature
+from euvatvalidation_sdk.feature.ratelimit_feature import EuVatValidationRatelimitFeature
+from euvatvalidation_sdk.feature.retry_feature import EuVatValidationRetryFeature
 from euvatvalidation_sdk.feature.test_feature import EuVatValidationTestFeature
+from euvatvalidation_sdk.feature.timeout_feature import EuVatValidationTimeoutFeature
 
 
 _FEATURES = {
     "base": lambda: EuVatValidationBaseFeature(),
+    "ratelimit": lambda: EuVatValidationRatelimitFeature(),
+    "retry": lambda: EuVatValidationRetryFeature(),
     "test": lambda: EuVatValidationTestFeature(),
+    "timeout": lambda: EuVatValidationTimeoutFeature(),
 }
 
 
