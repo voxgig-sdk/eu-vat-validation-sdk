@@ -1,4 +1,4 @@
 # Entity Models
 
-@"validate_format.aon"
-@"vat.aon"
+@"./validate_format.aon"
+@"./vat.aon"

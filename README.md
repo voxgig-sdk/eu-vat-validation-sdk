@@ -105,12 +105,12 @@ local result, err = client:ValidateFormat():load({ country = "example", number =
 
 | Language | Package | Install |
 | --- | --- | --- |
-| TypeScript | `@voxgig-sdk/eu-vat-validation-sdk` | publish pending — [install from git tag](https://github.com/voxgig-sdk/eu-vat-validation-sdk/releases) |
-| Python | `voxgig-sdk-eu-vat-validation` | publish pending — [install from git tag](https://github.com/voxgig-sdk/eu-vat-validation-sdk/releases) |
-| PHP | `voxgig-sdk/eu-vat-validation` | publish pending — [install from git tag](https://github.com/voxgig-sdk/eu-vat-validation-sdk/releases) |
+| TypeScript | `@voxgig-sdk/eu-vat-validation-sdk` | publish pending — [install from git tag](https://github.com/voxgig-sdk/eu-vat-validation-sdk/tags) |
+| Python | `voxgig-sdk-eu-vat-validation` | publish pending — [install from git tag](https://github.com/voxgig-sdk/eu-vat-validation-sdk/tags) |
+| PHP | `voxgig-sdk/eu-vat-validation` | publish pending — [install from git tag](https://github.com/voxgig-sdk/eu-vat-validation-sdk/tags) |
 | Golang | `github.com/voxgig-sdk/eu-vat-validation-sdk/go` | `go get github.com/voxgig-sdk/eu-vat-validation-sdk/go@latest` |
-| Ruby | `voxgig-sdk-eu-vat-validation` | publish pending — [install from git tag](https://github.com/voxgig-sdk/eu-vat-validation-sdk/releases) |
-| Lua | `voxgig-sdk-eu-vat-validation` | publish pending — [install from git tag](https://github.com/voxgig-sdk/eu-vat-validation-sdk/releases) |
+| Ruby | `voxgig-sdk-eu-vat-validation` | publish pending — [install from git tag](https://github.com/voxgig-sdk/eu-vat-validation-sdk/tags) |
+| Lua | `voxgig-sdk-eu-vat-validation` | publish pending — [install from git tag](https://github.com/voxgig-sdk/eu-vat-validation-sdk/tags) |
 | Go CLI | `github.com/voxgig-sdk/eu-vat-validation-sdk/go-cli` | `go install github.com/voxgig-sdk/eu-vat-validation-sdk/go-cli/cmd/eu-vat-validation@latest` |
 | Go MCP server | `github.com/voxgig-sdk/eu-vat-validation-sdk/go-mcp` | `go get github.com/voxgig-sdk/eu-vat-validation-sdk/go-mcp@latest` |
 

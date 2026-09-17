@@ -1,4 +1,4 @@
 # Flows
 
-@"BasicValidateFormatFlow.aon"
-@"BasicVatFlow.aon"
+@"./BasicValidateFormatFlow.aon"
+@"./BasicVatFlow.aon"
