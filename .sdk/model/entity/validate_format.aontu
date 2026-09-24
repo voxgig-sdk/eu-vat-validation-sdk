@@ -1,0 +1,143 @@
+# Entity: validate_format
+
+main: kit: entity: validate_format: {
+
+  alias: field: {}
+
+  fields: {
+    checked_at: {
+      fo: "date-time"
+      h: "Checked At"
+      n: "checked_at"
+      r: true
+      sh: "Timestamp of the validation check"
+      t: "`$STRING`"
+    }
+    country_code: {
+      h: "Country Code"
+      n: "country_code"
+      r: true
+      sh: "Two-letter ISO country code"
+      t: "`$STRING`"
+    }
+    country_name: {
+      h: "Country Name"
+      n: "country_name"
+      r: true
+      sh: "Full country name"
+      t: "`$STRING`"
+    }
+    id: {
+      h: "Id"
+      n: "id"
+      r: false
+      t: "`$STRING`"
+    }
+    source: {
+      h: "Source"
+      n: "source"
+      r: true
+      sh: "Source of validation"
+      t: "`$STRING`"
+    }
+    valid: {
+      h: "Valid"
+      n: "valid"
+      r: true
+      sh: "Whether the VAT number format is valid according to country-specific rules"
+      t: "`$BOOLEAN`"
+    }
+    vat_number: {
+      h: "Vat Number"
+      n: "vat_number"
+      r: true
+      sh: "VAT number without country code prefix"
+      t: "`$STRING`"
+    }
+    vat_number_full: {
+      h: "Vat Number Full"
+      n: "vat_number_full"
+      r: true
+      sh: "Full VAT number including country code prefix"
+      t: "`$STRING`"
+    }
+  }
+
+  id: {
+    field: "id"
+    from: {
+      country: "country_name"
+    }
+    name: "id"
+    parts: [
+      "country"
+      "number"
+    ]
+    sep: "/"
+  }
+
+  name: "validate_format"
+  op: {
+    load: {
+      name: "load"
+      points: [
+        {
+          co: {
+            id: "GET /vat/validate-format/{country}/{number}"
+            source: "openapi3"
+            version: 2
+          }
+          g: {
+            params: [
+              {
+                ex: "DE"
+                k: "param"
+                n: "country"
+                or: "country"
+                r: true
+                t: "`$STRING`"
+              }
+              {
+                ex: "190119364"
+                k: "param"
+                n: "number"
+                or: "number"
+                r: true
+                t: "`$STRING`"
+              }
+            ]
+          }
+          m: "GET"
+          o: "/vat/validate-format/{country}/{number}"
+          q: {
+            exist: [
+              "country"
+              "number"
+            ]
+          }
+          s: [
+            {
+              lit: "vat"
+            }
+            {
+              lit: "validate-format"
+            }
+            {
+              var: "country"
+            }
+            {
+              var: "number"
+            }
+          ]
+          t: {
+            req: "`reqdata`"
+            res: "`body`"
+          }
+        }
+      ]
+    }
+  }
+
+
+
+}

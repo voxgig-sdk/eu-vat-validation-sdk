@@ -41,7 +41,6 @@ client = EuVatValidationSDK({
 
 ### 3. Load a validateformat
 
-ValidateFormat is nested under country, so provide the `country`.
 `load()` returns the ENTITY — call data_get() for the record — and raises on error.
 
 ```python

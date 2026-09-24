@@ -1,7 +1,7 @@
 // Typed models for the EuVatValidation SDK.
 //
-// GENERATED from the API model: main.kit.entity.<e>.fields[] and per-op
-// params (op.<name>.points[].args.params[]). Field/param types come from the
+// GENERATED from the API model: main.kit.entity.<e>.fields{} and per-op
+// params (op.<name>.points[].g.params[]). Field/param types come from the
 // canonical type sentinels via @voxgig/sdkgen canonToType (source of truth:
 // @voxgig/apidef VALID_CANON). Do not edit by hand.
 package entity
@@ -14,14 +14,6 @@ import (
 
 // ValidateFormat is the typed data model for the validate_format entity.
 type ValidateFormat struct {
-	CheckedAt string `json:"checked_at"`
-	CountryCode string `json:"country_code"`
-	CountryName string `json:"country_name"`
-	Id *string `json:"id,omitempty"`
-	Source string `json:"source"`
-	Valid bool `json:"valid"`
-	VatNumber string `json:"vat_number"`
-	VatNumberFull string `json:"vat_number_full"`
 }
 
 // ValidateFormatLoadMatch is the typed request payload for ValidateFormat.LoadTyped.
@@ -32,16 +24,6 @@ type ValidateFormatLoadMatch struct {
 
 // Vat is the typed data model for the vat entity.
 type Vat struct {
-	CheckedAt string `json:"checked_at"`
-	CompanyAddress *string `json:"company_address,omitempty"`
-	CompanyName *string `json:"company_name,omitempty"`
-	CountryCode string `json:"country_code"`
-	CountryName string `json:"country_name"`
-	Id *string `json:"id,omitempty"`
-	Source string `json:"source"`
-	Valid bool `json:"valid"`
-	VatNumber string `json:"vat_number"`
-	VatNumberFull string `json:"vat_number_full"`
 }
 
 // VatLoadMatch is the typed request payload for Vat.LoadTyped.

@@ -95,51 +95,59 @@ func MakeConfig() map[string]any {
 			"validate_format": map[string]any{
 				"fields": []any{
 					map[string]any{
-						"format": "date-time",
 						"name": "checked_at",
+						"title": "Checked At",
+						"type": "`$STRING`",
 						"req": true,
 						"short": "Timestamp of the validation check",
-						"type": "`$STRING`",
+						"format": "date-time",
 					},
 					map[string]any{
 						"name": "country_code",
+						"title": "Country Code",
+						"type": "`$STRING`",
 						"req": true,
 						"short": "Two-letter ISO country code",
-						"type": "`$STRING`",
 					},
 					map[string]any{
 						"name": "country_name",
+						"title": "Country Name",
+						"type": "`$STRING`",
 						"req": true,
 						"short": "Full country name",
-						"type": "`$STRING`",
 					},
 					map[string]any{
 						"name": "id",
+						"title": "Id",
 						"type": "`$STRING`",
 					},
 					map[string]any{
 						"name": "source",
+						"title": "Source",
+						"type": "`$STRING`",
 						"req": true,
 						"short": "Source of validation",
-						"type": "`$STRING`",
 					},
 					map[string]any{
 						"name": "valid",
+						"title": "Valid",
+						"type": "`$BOOLEAN`",
 						"req": true,
 						"short": "Whether the VAT number format is valid according to country-specific rules",
-						"type": "`$BOOLEAN`",
 					},
 					map[string]any{
 						"name": "vat_number",
+						"title": "Vat Number",
+						"type": "`$STRING`",
 						"req": true,
 						"short": "VAT number without country code prefix",
-						"type": "`$STRING`",
 					},
 					map[string]any{
 						"name": "vat_number_full",
+						"title": "Vat Number Full",
+						"type": "`$STRING`",
 						"req": true,
 						"short": "Full VAT number including country code prefix",
-						"type": "`$STRING`",
 					},
 				},
 				"id": map[string]any{
@@ -161,26 +169,6 @@ func MakeConfig() map[string]any {
 						"name": "load",
 						"points": []any{
 							map[string]any{
-								"args": map[string]any{
-									"params": []any{
-										map[string]any{
-											"example": "DE",
-											"kind": "param",
-											"name": "country",
-											"orig": "country",
-											"reqd": true,
-											"type": "`$STRING`",
-										},
-										map[string]any{
-											"example": "190119364",
-											"kind": "param",
-											"name": "number",
-											"orig": "number",
-											"reqd": true,
-											"type": "`$STRING`",
-										},
-									},
-								},
 								"kind": "http",
 								"method": "GET",
 								"orig": "/vat/validate-format/{country}/{number}",
@@ -198,92 +186,119 @@ func MakeConfig() map[string]any {
 										"var": "number",
 									},
 								},
-								"select": map[string]any{
-									"exist": []any{
-										"country",
-										"number",
-									},
-								},
-								"transform": map[string]any{
-									"req": "`reqdata`",
-									"res": "`body`",
-								},
 								"parts": []any{
 									"vat",
 									"validate-format",
 									"{country}",
 									"{number}",
 								},
+								"rename": map[string]any{},
+								"transform": map[string]any{
+									"req": "`reqdata`",
+									"res": "`body`",
+								},
+								"args": map[string]any{
+									"params": []any{
+										map[string]any{
+											"name": "country",
+											"orig": "country",
+											"type": "`$STRING`",
+											"kind": "param",
+											"reqd": true,
+											"example": "DE",
+										},
+										map[string]any{
+											"name": "number",
+											"orig": "number",
+											"type": "`$STRING`",
+											"kind": "param",
+											"reqd": true,
+											"example": "190119364",
+										},
+									},
+								},
+								"select": map[string]any{
+									"exist": []any{
+										"country",
+										"number",
+									},
+								},
 							},
 						},
 					},
 				},
 				"relations": map[string]any{
-					"ancestors": []any{
-						[]any{
-							"validate_format",
-						},
-					},
+					"ancestors": []any{},
 				},
 			},
 			"vat": map[string]any{
 				"fields": []any{
 					map[string]any{
-						"format": "date-time",
 						"name": "checked_at",
+						"title": "Checked At",
+						"type": "`$STRING`",
 						"req": true,
 						"short": "Timestamp of the validation check",
-						"type": "`$STRING`",
+						"format": "date-time",
 					},
 					map[string]any{
 						"name": "company_address",
-						"short": "Registered company address from VIES",
+						"title": "Company Address",
 						"type": "`$STRING`",
+						"short": "Registered company address from VIES",
 					},
 					map[string]any{
 						"name": "company_name",
-						"short": "Registered company name from VIES",
+						"title": "Company Name",
 						"type": "`$STRING`",
+						"short": "Registered company name from VIES",
 					},
 					map[string]any{
 						"name": "country_code",
+						"title": "Country Code",
+						"type": "`$STRING`",
 						"req": true,
 						"short": "Two-letter ISO country code",
-						"type": "`$STRING`",
 					},
 					map[string]any{
 						"name": "country_name",
+						"title": "Country Name",
+						"type": "`$STRING`",
 						"req": true,
 						"short": "Full country name",
-						"type": "`$STRING`",
 					},
 					map[string]any{
 						"name": "id",
+						"title": "Id",
 						"type": "`$STRING`",
 					},
 					map[string]any{
 						"name": "source",
+						"title": "Source",
+						"type": "`$STRING`",
 						"req": true,
 						"short": "Source of validation data",
-						"type": "`$STRING`",
 					},
 					map[string]any{
 						"name": "valid",
+						"title": "Valid",
+						"type": "`$BOOLEAN`",
 						"req": true,
 						"short": "Whether the VAT number is valid according to VIES",
-						"type": "`$BOOLEAN`",
 					},
 					map[string]any{
 						"name": "vat_number",
+						"title": "Vat Number",
+						"type": "`$STRING`",
 						"req": true,
 						"short": "VAT number without country code prefix",
-						"type": "`$STRING`",
 					},
 					map[string]any{
 						"name": "vat_number_full",
+						"title": "Vat Number Full",
+						"type": "`$STRING`",
 						"req": true,
 						"short": "Full VAT number including country code prefix",
-						"type": "`$STRING`",
 					},
 				},
 				"id": map[string]any{
@@ -305,26 +320,6 @@ func MakeConfig() map[string]any {
 						"name": "load",
 						"points": []any{
 							map[string]any{
-								"args": map[string]any{
-									"params": []any{
-										map[string]any{
-											"example": "DE",
-											"kind": "param",
-											"name": "country",
-											"orig": "country",
-											"reqd": true,
-											"type": "`$STRING`",
-										},
-										map[string]any{
-											"example": "190119364",
-											"kind": "param",
-											"name": "number",
-											"orig": "number",
-											"reqd": true,
-											"type": "`$STRING`",
-										},
-									},
-								},
 								"kind": "http",
 								"method": "GET",
 								"orig": "/vat/{country}/{number}",
@@ -339,31 +334,48 @@ func MakeConfig() map[string]any {
 										"var": "number",
 									},
 								},
+								"parts": []any{
+									"vat",
+									"{country}",
+									"{number}",
+								},
+								"rename": map[string]any{},
+								"transform": map[string]any{
+									"req": "`reqdata`",
+									"res": "`body`",
+								},
+								"args": map[string]any{
+									"params": []any{
+										map[string]any{
+											"name": "country",
+											"orig": "country",
+											"type": "`$STRING`",
+											"kind": "param",
+											"reqd": true,
+											"example": "DE",
+										},
+										map[string]any{
+											"name": "number",
+											"orig": "number",
+											"type": "`$STRING`",
+											"kind": "param",
+											"reqd": true,
+											"example": "190119364",
+										},
+									},
+								},
 								"select": map[string]any{
 									"exist": []any{
 										"country",
 										"number",
 									},
 								},
-								"transform": map[string]any{
-									"req": "`reqdata`",
-									"res": "`body`",
-								},
-								"parts": []any{
-									"vat",
-									"{country}",
-									"{number}",
-								},
 							},
 						},
 					},
 				},
 				"relations": map[string]any{
-					"ancestors": []any{
-						[]any{
-							"vat",
-						},
-					},
+					"ancestors": []any{},
 				},
 			},
 		},

@@ -1,0 +1,154 @@
+# Entity: vat
+
+main: kit: entity: vat: {
+
+  alias: field: {}
+
+  fields: {
+    checked_at: {
+      fo: "date-time"
+      h: "Checked At"
+      n: "checked_at"
+      r: true
+      sh: "Timestamp of the validation check"
+      t: "`$STRING`"
+    }
+    company_address: {
+      h: "Company Address"
+      n: "company_address"
+      r: false
+      sh: "Registered company address from VIES"
+      t: "`$STRING`"
+    }
+    company_name: {
+      h: "Company Name"
+      n: "company_name"
+      r: false
+      sh: "Registered company name from VIES"
+      t: "`$STRING`"
+    }
+    country_code: {
+      h: "Country Code"
+      n: "country_code"
+      r: true
+      sh: "Two-letter ISO country code"
+      t: "`$STRING`"
+    }
+    country_name: {
+      h: "Country Name"
+      n: "country_name"
+      r: true
+      sh: "Full country name"
+      t: "`$STRING`"
+    }
+    id: {
+      h: "Id"
+      n: "id"
+      r: false
+      t: "`$STRING`"
+    }
+    source: {
+      h: "Source"
+      n: "source"
+      r: true
+      sh: "Source of validation data"
+      t: "`$STRING`"
+    }
+    valid: {
+      h: "Valid"
+      n: "valid"
+      r: true
+      sh: "Whether the VAT number is valid according to VIES"
+      t: "`$BOOLEAN`"
+    }
+    vat_number: {
+      h: "Vat Number"
+      n: "vat_number"
+      r: true
+      sh: "VAT number without country code prefix"
+      t: "`$STRING`"
+    }
+    vat_number_full: {
+      h: "Vat Number Full"
+      n: "vat_number_full"
+      r: true
+      sh: "Full VAT number including country code prefix"
+      t: "`$STRING`"
+    }
+  }
+
+  id: {
+    field: "id"
+    from: {
+      country: "country_name"
+    }
+    name: "id"
+    parts: [
+      "country"
+      "number"
+    ]
+    sep: "/"
+  }
+
+  name: "vat"
+  op: {
+    load: {
+      name: "load"
+      points: [
+        {
+          co: {
+            id: "GET /vat/{country}/{number}"
+            source: "openapi3"
+            version: 2
+          }
+          g: {
+            params: [
+              {
+                ex: "DE"
+                k: "param"
+                n: "country"
+                or: "country"
+                r: true
+                t: "`$STRING`"
+              }
+              {
+                ex: "190119364"
+                k: "param"
+                n: "number"
+                or: "number"
+                r: true
+                t: "`$STRING`"
+              }
+            ]
+          }
+          m: "GET"
+          o: "/vat/{country}/{number}"
+          q: {
+            exist: [
+              "country"
+              "number"
+            ]
+          }
+          s: [
+            {
+              lit: "vat"
+            }
+            {
+              var: "country"
+            }
+            {
+              var: "number"
+            }
+          ]
+          t: {
+            req: "`reqdata`"
+            res: "`body`"
+          }
+        }
+      ]
+    }
+  }
+
+
+
+}

@@ -37,8 +37,6 @@ local client = sdk.new({
 
 ### 3. Load a validateformat
 
-ValidateFormat is nested under country, so provide the `country`.
-
 ```lua
 local validateformat, err = client:ValidateFormat():load({ country = "example_country", number = "example_number" })
 if err then error(err) end

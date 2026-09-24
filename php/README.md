@@ -35,8 +35,6 @@ $client = new EuVatValidationSDK([
 
 ### 3. Load a validateformat
 
-ValidateFormat is nested under country, so provide the `country`.
-
 ```php
 try {
     // load() returns the ENTITY — call data_get() for the ValidateFormat record (throws on error).

@@ -120,51 +120,59 @@ def make_config():
       "validate_format": {
         "fields": [
           {
-            "format": "date-time",
             "name": "checked_at",
+            "title": "Checked At",
+            "type": "`$STRING`",
             "req": True,
             "short": "Timestamp of the validation check",
-            "type": "`$STRING`",
+            "format": "date-time",
           },
           {
             "name": "country_code",
+            "title": "Country Code",
+            "type": "`$STRING`",
             "req": True,
             "short": "Two-letter ISO country code",
-            "type": "`$STRING`",
           },
           {
             "name": "country_name",
+            "title": "Country Name",
+            "type": "`$STRING`",
             "req": True,
             "short": "Full country name",
-            "type": "`$STRING`",
           },
           {
             "name": "id",
+            "title": "Id",
             "type": "`$STRING`",
           },
           {
             "name": "source",
+            "title": "Source",
+            "type": "`$STRING`",
             "req": True,
             "short": "Source of validation",
-            "type": "`$STRING`",
           },
           {
             "name": "valid",
+            "title": "Valid",
+            "type": "`$BOOLEAN`",
             "req": True,
             "short": "Whether the VAT number format is valid according to country-specific rules",
-            "type": "`$BOOLEAN`",
           },
           {
             "name": "vat_number",
+            "title": "Vat Number",
+            "type": "`$STRING`",
             "req": True,
             "short": "VAT number without country code prefix",
-            "type": "`$STRING`",
           },
           {
             "name": "vat_number_full",
+            "title": "Vat Number Full",
+            "type": "`$STRING`",
             "req": True,
             "short": "Full VAT number including country code prefix",
-            "type": "`$STRING`",
           },
         ],
         "id": {
@@ -186,26 +194,6 @@ def make_config():
             "name": "load",
             "points": [
               {
-                "args": {
-                  "params": [
-                    {
-                      "example": "DE",
-                      "kind": "param",
-                      "name": "country",
-                      "orig": "country",
-                      "reqd": True,
-                      "type": "`$STRING`",
-                    },
-                    {
-                      "example": "190119364",
-                      "kind": "param",
-                      "name": "number",
-                      "orig": "number",
-                      "reqd": True,
-                      "type": "`$STRING`",
-                    },
-                  ],
-                },
                 "kind": "http",
                 "method": "GET",
                 "orig": "/vat/validate-format/{country}/{number}",
@@ -223,92 +211,119 @@ def make_config():
                     "var": "number",
                   },
                 ],
-                "select": {
-                  "exist": [
-                    "country",
-                    "number",
-                  ],
-                },
-                "transform": {
-                  "req": "`reqdata`",
-                  "res": "`body`",
-                },
                 "parts": [
                   "vat",
                   "validate-format",
                   "{country}",
                   "{number}",
                 ],
+                "rename": {},
+                "transform": {
+                  "req": "`reqdata`",
+                  "res": "`body`",
+                },
+                "args": {
+                  "params": [
+                    {
+                      "name": "country",
+                      "orig": "country",
+                      "type": "`$STRING`",
+                      "kind": "param",
+                      "reqd": True,
+                      "example": "DE",
+                    },
+                    {
+                      "name": "number",
+                      "orig": "number",
+                      "type": "`$STRING`",
+                      "kind": "param",
+                      "reqd": True,
+                      "example": "190119364",
+                    },
+                  ],
+                },
+                "select": {
+                  "exist": [
+                    "country",
+                    "number",
+                  ],
+                },
               },
             ],
           },
         },
         "relations": {
-          "ancestors": [
-            [
-              "validate_format",
-            ],
-          ],
+          "ancestors": [],
         },
       },
       "vat": {
         "fields": [
           {
-            "format": "date-time",
             "name": "checked_at",
+            "title": "Checked At",
+            "type": "`$STRING`",
             "req": True,
             "short": "Timestamp of the validation check",
-            "type": "`$STRING`",
+            "format": "date-time",
           },
           {
             "name": "company_address",
-            "short": "Registered company address from VIES",
+            "title": "Company Address",
             "type": "`$STRING`",
+            "short": "Registered company address from VIES",
           },
           {
             "name": "company_name",
-            "short": "Registered company name from VIES",
+            "title": "Company Name",
             "type": "`$STRING`",
+            "short": "Registered company name from VIES",
           },
           {
             "name": "country_code",
+            "title": "Country Code",
+            "type": "`$STRING`",
             "req": True,
             "short": "Two-letter ISO country code",
-            "type": "`$STRING`",
           },
           {
             "name": "country_name",
+            "title": "Country Name",
+            "type": "`$STRING`",
             "req": True,
             "short": "Full country name",
-            "type": "`$STRING`",
           },
           {
             "name": "id",
+            "title": "Id",
             "type": "`$STRING`",
           },
           {
             "name": "source",
+            "title": "Source",
+            "type": "`$STRING`",
             "req": True,
             "short": "Source of validation data",
-            "type": "`$STRING`",
           },
           {
             "name": "valid",
+            "title": "Valid",
+            "type": "`$BOOLEAN`",
             "req": True,
             "short": "Whether the VAT number is valid according to VIES",
-            "type": "`$BOOLEAN`",
           },
           {
             "name": "vat_number",
+            "title": "Vat Number",
+            "type": "`$STRING`",
             "req": True,
             "short": "VAT number without country code prefix",
-            "type": "`$STRING`",
           },
           {
             "name": "vat_number_full",
+            "title": "Vat Number Full",
+            "type": "`$STRING`",
             "req": True,
             "short": "Full VAT number including country code prefix",
-            "type": "`$STRING`",
           },
         ],
         "id": {
@@ -330,26 +345,6 @@ def make_config():
             "name": "load",
             "points": [
               {
-                "args": {
-                  "params": [
-                    {
-                      "example": "DE",
-                      "kind": "param",
-                      "name": "country",
-                      "orig": "country",
-                      "reqd": True,
-                      "type": "`$STRING`",
-                    },
-                    {
-                      "example": "190119364",
-                      "kind": "param",
-                      "name": "number",
-                      "orig": "number",
-                      "reqd": True,
-                      "type": "`$STRING`",
-                    },
-                  ],
-                },
                 "kind": "http",
                 "method": "GET",
                 "orig": "/vat/{country}/{number}",
@@ -364,31 +359,48 @@ def make_config():
                     "var": "number",
                   },
                 ],
+                "parts": [
+                  "vat",
+                  "{country}",
+                  "{number}",
+                ],
+                "rename": {},
+                "transform": {
+                  "req": "`reqdata`",
+                  "res": "`body`",
+                },
+                "args": {
+                  "params": [
+                    {
+                      "name": "country",
+                      "orig": "country",
+                      "type": "`$STRING`",
+                      "kind": "param",
+                      "reqd": True,
+                      "example": "DE",
+                    },
+                    {
+                      "name": "number",
+                      "orig": "number",
+                      "type": "`$STRING`",
+                      "kind": "param",
+                      "reqd": True,
+                      "example": "190119364",
+                    },
+                  ],
+                },
                 "select": {
                   "exist": [
                     "country",
                     "number",
                   ],
                 },
-                "transform": {
-                  "req": "`reqdata`",
-                  "res": "`body`",
-                },
-                "parts": [
-                  "vat",
-                  "{country}",
-                  "{number}",
-                ],
               },
             ],
           },
         },
         "relations": {
-          "ancestors": [
-            [
-              "vat",
-            ],
-          ],
+          "ancestors": [],
         },
       },
     },

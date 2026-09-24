@@ -34,8 +34,6 @@ client = EuVatValidationSDK.new({
 
 ### 3. Load a validateformat
 
-ValidateFormat is nested under country, so provide the `country`.
-
 ```ruby
 begin
   # load returns the ENTITY — call data_get for the ValidateFormat record (raises on error).

@@ -24,70 +24,144 @@
         "repr": "auto"
       },
       "contributor": {},
+      "doc": {
+        "active": true,
+        "assets": {
+          "path": ".sdk/doc/assets"
+        },
+        "brand": {
+          "label": "",
+          "notice": "",
+          "shortNotice": "",
+          "url": ""
+        },
+        "ci": {
+          "active": true,
+          "branch": "main"
+        },
+        "content": {
+          "path": ".sdk/doc/content"
+        },
+        "edition": {
+          "summary": {
+            "active": true,
+            "base": "node_modules/@voxgig/docgen/project/.sdk",
+            "brand": {},
+            "filter": {
+              "entities": [],
+              "features": [],
+              "targets": []
+            },
+            "kind": "summary",
+            "name": "summary",
+            "origname": "",
+            "output": {
+              "path": "SUMMARY.md"
+            },
+            "package": "@voxgig/docgen",
+            "published": false,
+            "site": {
+              "active": true
+            },
+            "style": {},
+            "title": ""
+          }
+        },
+        "qa": {
+          "vocabulary": []
+        },
+        "style": {
+          "color": {
+            "accent": "#00c6d8",
+            "background": "#f5f5f9",
+            "darkBackground": "#0f1117",
+            "darkText": "#e6edf3",
+            "primary": "#e70042",
+            "text": "#0a0a0a"
+          },
+          "font": "Nunito, system-ui, sans-serif",
+          "fontFile": "",
+          "headingFont": "Nunito, system-ui, sans-serif",
+          "headingFontFile": "",
+          "logo": "",
+          "mode": "light",
+          "mono": "ui-monospace, monospace",
+          "monoFile": ""
+        },
+        "target": {}
+      },
       "entity": {
         "validate_format": {
           "active": true,
           "alias": {
             "field": {}
           },
-          "fields": [
-            {
-              "active": true,
-              "format": "date-time",
-              "name": "checked_at",
-              "req": true,
-              "short": "Timestamp of the validation check",
-              "type": "`$STRING`"
+          "fields": {
+            "checked_at": {
+              "a": true,
+              "fo": "date-time",
+              "h": "Checked At",
+              "n": "checked_at",
+              "r": true,
+              "sh": "Timestamp of the validation check",
+              "t": "`$STRING`"
             },
-            {
-              "active": true,
-              "name": "country_code",
-              "req": true,
-              "short": "Two-letter ISO country code",
-              "type": "`$STRING`"
+            "country_code": {
+              "a": true,
+              "h": "Country Code",
+              "n": "country_code",
+              "r": true,
+              "sh": "Two-letter ISO country code",
+              "t": "`$STRING`"
             },
-            {
-              "active": true,
-              "name": "country_name",
-              "req": true,
-              "short": "Full country name",
-              "type": "`$STRING`"
+            "country_name": {
+              "a": true,
+              "h": "Country Name",
+              "n": "country_name",
+              "r": true,
+              "sh": "Full country name",
+              "t": "`$STRING`"
             },
-            {
-              "active": true,
-              "name": "id",
-              "req": false,
-              "type": "`$STRING`"
+            "id": {
+              "a": true,
+              "h": "Id",
+              "n": "id",
+              "r": false,
+              "t": "`$STRING`"
             },
-            {
-              "active": true,
-              "name": "source",
-              "req": true,
-              "short": "Source of validation",
-              "type": "`$STRING`"
+            "source": {
+              "a": true,
+              "h": "Source",
+              "n": "source",
+              "r": true,
+              "sh": "Source of validation",
+              "t": "`$STRING`"
             },
-            {
-              "active": true,
-              "name": "valid",
-              "req": true,
-              "short": "Whether the VAT number format is valid according to country-specific rules",
-              "type": "`$BOOLEAN`"
+            "valid": {
+              "a": true,
+              "h": "Valid",
+              "n": "valid",
+              "r": true,
+              "sh": "Whether the VAT number format is valid according to country-specific rules",
+              "t": "`$BOOLEAN`"
             },
-            {
-              "active": true,
-              "name": "vat_number",
-              "req": true,
-              "short": "VAT number without country code prefix",
-              "type": "`$STRING`"
+            "vat_number": {
+              "a": true,
+              "h": "Vat Number",
+              "n": "vat_number",
+              "r": true,
+              "sh": "VAT number without country code prefix",
+              "t": "`$STRING`"
             },
-            {
-              "active": true,
-              "name": "vat_number_full",
-              "req": true,
-              "short": "Full VAT number including country code prefix",
-              "type": "`$STRING`"
+            "vat_number_full": {
+              "a": true,
+              "h": "Vat Number Full",
+              "n": "vat_number_full",
+              "r": true,
+              "sh": "Full VAT number including country code prefix",
+              "t": "`$STRING`"
             }
-          ],
+          },
           "id": {
             "field": "id",
             "from": {
@@ -107,39 +181,45 @@
               "name": "load",
               "points": [
                 {
-                  "active": true,
-                  "args": {
+                  "a": true,
+                  "co": {
+                    "id": "GET /vat/validate-format/{country}/{number}",
+                    "source": "openapi3",
+                    "version": 2
+                  },
+                  "g": {
                     "params": [
                       {
-                        "active": true,
-                        "example": "DE",
-                        "kind": "param",
-                        "name": "country",
-                        "orig": "country",
-                        "reqd": true,
-                        "type": "`$STRING`"
+                        "a": true,
+                        "ex": "DE",
+                        "k": "param",
+                        "n": "country",
+                        "or": "country",
+                        "r": true,
+                        "t": "`$STRING`"
                       },
                       {
-                        "active": true,
-                        "example": "190119364",
-                        "kind": "param",
-                        "name": "number",
-                        "orig": "number",
-                        "reqd": true,
-                        "type": "`$STRING`"
+                        "a": true,
+                        "ex": "190119364",
+                        "k": "param",
+                        "n": "number",
+                        "or": "number",
+                        "r": true,
+                        "t": "`$STRING`"
                       }
                     ]
                   },
-                  "contract": {
-                    "id": "GET /vat/validate-format/{country}/{number}",
-                    "json": "{\"operationId\":\"validateVatFormat\",\"parameters\":[{\"description\":\"Two-letter ISO country code (e.g., DE, FR, NL, BE, IT, ES, PL, AT, SE, DK, or XI for Northern Ireland)\",\"in\":\"path\",\"name\":\"country\",\"required\":true,\"schema\":{\"example\":\"DE\",\"pattern\":\"^[A-Z]{2}$\",\"type\":\"string\"}},{\"description\":\"VAT number without country code prefix\",\"in\":\"path\",\"name\":\"number\",\"required\":true,\"schema\":{\"example\":\"190119364\",\"type\":\"string\"}}],\"protocol\":\"http\",\"responses\":{\"200\":{\"content\":{\"application/json\":{\"example\":{\"checked_at\":\"2026-04-26T12:00:00+00:00\",\"country_code\":\"DE\",\"country_name\":\"Germany\",\"source\":\"format_check\",\"valid\":true,\"vat_number\":\"190119364\",\"vat_number_full\":\"DE190119364\"},\"schema\":{\"properties\":{\"checked_at\":{\"description\":\"Timestamp of the validation check\",\"example\":\"2026-04-26T12:00:00+00:00\",\"format\":\"date-time\",\"type\":\"string\"},\"country_code\":{\"description\":\"Two-letter ISO country code\",\"example\":\"DE\",\"type\":\"string\"},\"country_name\":{\"description\":\"Full country name\",\"example\":\"Germany\",\"type\":\"string\"},\"source\":{\"description\":\"Source of validation\",\"enum\":[\"format_check\"],\"example\":\"format_check\",\"type\":\"string\"},\"valid\":{\"description\":\"Whether the VAT number format is valid according to country-specific rules\",\"type\":\"boolean\"},\"vat_number\":{\"description\":\"VAT number without country code prefix\",\"example\":\"190119364\",\"type\":\"string\"},\"vat_number_full\":{\"description\":\"Full VAT number including country code prefix\",\"example\":\"DE190119364\",\"type\":\"string\"}},\"required\":[\"valid\",\"country_code\",\"country_name\",\"vat_number\",\"vat_number_full\",\"checked_at\",\"source\"],\"type\":\"object\"}}},\"description\":\"Successful format validation response\"},\"400\":{\"content\":{\"application/json\":{\"schema\":{\"properties\":{\"error\":{\"description\":\"Error message describing what went wrong\",\"type\":\"string\"},\"message\":{\"description\":\"Detailed error information\",\"type\":\"string\"}},\"required\":[\"error\"],\"type\":\"object\"}}},\"description\":\"Bad request - invalid country code or VAT number format\"}},\"security\":[],\"securitySchemes\":{\"ApiKeyAuth\":{\"description\":\"API key for authentication. Get your key at https://kiprio.com/vat-api/\",\"in\":\"header\",\"name\":\"X-API-Key\",\"type\":\"apiKey\"}},\"securitySource\":\"operation\"}",
-                    "source": "openapi3",
-                    "version": 1
+                  "k": "http",
+                  "m": "GET",
+                  "o": "/vat/validate-format/{country}/{number}",
+                  "q": {
+                    "exist": [
+                      "country",
+                      "number"
+                    ]
                   },
-                  "kind": "http",
-                  "method": "GET",
-                  "orig": "/vat/validate-format/{country}/{number}",
-                  "segments": [
+                  "r": {},
+                  "s": [
                     {
                       "lit": "vat"
                     },
@@ -153,13 +233,7 @@
                       "var": "number"
                     }
                   ],
-                  "select": {
-                    "exist": [
-                      "country",
-                      "number"
-                    ]
-                  },
-                  "transform": {
+                  "t": {
                     "req": "`reqdata`",
                     "res": "`body`"
                   }
@@ -168,11 +242,7 @@
             }
           },
           "relations": {
-            "ancestors": [
-              [
-                "validate_format"
-              ]
-            ]
+            "ancestors": []
           }
         },
         "vat": {
@@ -180,78 +250,88 @@
           "alias": {
             "field": {}
           },
-          "fields": [
-            {
-              "active": true,
-              "format": "date-time",
-              "name": "checked_at",
-              "req": true,
-              "short": "Timestamp of the validation check",
-              "type": "`$STRING`"
+          "fields": {
+            "checked_at": {
+              "a": true,
+              "fo": "date-time",
+              "h": "Checked At",
+              "n": "checked_at",
+              "r": true,
+              "sh": "Timestamp of the validation check",
+              "t": "`$STRING`"
             },
-            {
-              "active": true,
-              "name": "company_address",
-              "req": false,
-              "short": "Registered company address from VIES",
-              "type": "`$STRING`"
+            "company_address": {
+              "a": true,
+              "h": "Company Address",
+              "n": "company_address",
+              "r": false,
+              "sh": "Registered company address from VIES",
+              "t": "`$STRING`"
             },
-            {
-              "active": true,
-              "name": "company_name",
-              "req": false,
-              "short": "Registered company name from VIES",
-              "type": "`$STRING`"
+            "company_name": {
+              "a": true,
+              "h": "Company Name",
+              "n": "company_name",
+              "r": false,
+              "sh": "Registered company name from VIES",
+              "t": "`$STRING`"
             },
-            {
-              "active": true,
-              "name": "country_code",
-              "req": true,
-              "short": "Two-letter ISO country code",
-              "type": "`$STRING`"
+            "country_code": {
+              "a": true,
+              "h": "Country Code",
+              "n": "country_code",
+              "r": true,
+              "sh": "Two-letter ISO country code",
+              "t": "`$STRING`"
             },
-            {
-              "active": true,
-              "name": "country_name",
-              "req": true,
-              "short": "Full country name",
-              "type": "`$STRING`"
+            "country_name": {
+              "a": true,
+              "h": "Country Name",
+              "n": "country_name",
+              "r": true,
+              "sh": "Full country name",
+              "t": "`$STRING`"
             },
-            {
-              "active": true,
-              "name": "id",
-              "req": false,
-              "type": "`$STRING`"
+            "id": {
+              "a": true,
+              "h": "Id",
+              "n": "id",
+              "r": false,
+              "t": "`$STRING`"
             },
-            {
-              "active": true,
-              "name": "source",
-              "req": true,
-              "short": "Source of validation data",
-              "type": "`$STRING`"
+            "source": {
+              "a": true,
+              "h": "Source",
+              "n": "source",
+              "r": true,
+              "sh": "Source of validation data",
+              "t": "`$STRING`"
             },
-            {
-              "active": true,
-              "name": "valid",
-              "req": true,
-              "short": "Whether the VAT number is valid according to VIES",
-              "type": "`$BOOLEAN`"
+            "valid": {
+              "a": true,
+              "h": "Valid",
+              "n": "valid",
+              "r": true,
+              "sh": "Whether the VAT number is valid according to VIES",
+              "t": "`$BOOLEAN`"
             },
-            {
-              "active": true,
-              "name": "vat_number",
-              "req": true,
-              "short": "VAT number without country code prefix",
-              "type": "`$STRING`"
+            "vat_number": {
+              "a": true,
+              "h": "Vat Number",
+              "n": "vat_number",
+              "r": true,
+              "sh": "VAT number without country code prefix",
+              "t": "`$STRING`"
             },
-            {
-              "active": true,
-              "name": "vat_number_full",
-              "req": true,
-              "short": "Full VAT number including country code prefix",
-              "type": "`$STRING`"
+            "vat_number_full": {
+              "a": true,
+              "h": "Vat Number Full",
+              "n": "vat_number_full",
+              "r": true,
+              "sh": "Full VAT number including country code prefix",
+              "t": "`$STRING`"
             }
-          ],
+          },
           "id": {
             "field": "id",
             "from": {
@@ -271,39 +351,45 @@
               "name": "load",
               "points": [
                 {
-                  "active": true,
-                  "args": {
+                  "a": true,
+                  "co": {
+                    "id": "GET /vat/{country}/{number}",
+                    "source": "openapi3",
+                    "version": 2
+                  },
+                  "g": {
                     "params": [
                       {
-                        "active": true,
-                        "example": "DE",
-                        "kind": "param",
-                        "name": "country",
-                        "orig": "country",
-                        "reqd": true,
-                        "type": "`$STRING`"
+                        "a": true,
+                        "ex": "DE",
+                        "k": "param",
+                        "n": "country",
+                        "or": "country",
+                        "r": true,
+                        "t": "`$STRING`"
                       },
                       {
-                        "active": true,
-                        "example": "190119364",
-                        "kind": "param",
-                        "name": "number",
-                        "orig": "number",
-                        "reqd": true,
-                        "type": "`$STRING`"
+                        "a": true,
+                        "ex": "190119364",
+                        "k": "param",
+                        "n": "number",
+                        "or": "number",
+                        "r": true,
+                        "t": "`$STRING`"
                       }
                     ]
                   },
-                  "contract": {
-                    "id": "GET /vat/{country}/{number}",
-                    "json": "{\"operationId\":\"validateVatNumber\",\"parameters\":[{\"description\":\"Two-letter ISO country code (e.g., DE, FR, NL, BE, IT, ES, PL, AT, SE, DK, or XI for Northern Ireland)\",\"in\":\"path\",\"name\":\"country\",\"required\":true,\"schema\":{\"example\":\"DE\",\"pattern\":\"^[A-Z]{2}$\",\"type\":\"string\"}},{\"description\":\"VAT number without country code prefix\",\"in\":\"path\",\"name\":\"number\",\"required\":true,\"schema\":{\"example\":\"190119364\",\"type\":\"string\"}}],\"protocol\":\"http\",\"responses\":{\"200\":{\"content\":{\"application/json\":{\"example\":{\"checked_at\":\"2026-04-26T12:00:00+00:00\",\"company_address\":\"Musterstrasse 1\\n10115 Berlin\",\"company_name\":\"EXAMPLE GMBH\",\"country_code\":\"DE\",\"country_name\":\"Germany\",\"source\":\"VIES\",\"valid\":true,\"vat_number\":\"190119364\",\"vat_number_full\":\"DE190119364\"},\"schema\":{\"properties\":{\"checked_at\":{\"description\":\"Timestamp of the validation check\",\"example\":\"2026-04-26T12:00:00+00:00\",\"format\":\"date-time\",\"type\":\"string\"},\"company_address\":{\"description\":\"Registered company address from VIES\",\"example\":\"Musterstrasse 1\\n10115 Berlin\",\"nullable\":true,\"type\":\"string\"},\"company_name\":{\"description\":\"Registered company name from VIES\",\"example\":\"EXAMPLE GMBH\",\"nullable\":true,\"type\":\"string\"},\"country_code\":{\"description\":\"Two-letter ISO country code\",\"example\":\"DE\",\"type\":\"string\"},\"country_name\":{\"description\":\"Full country name\",\"example\":\"Germany\",\"type\":\"string\"},\"source\":{\"description\":\"Source of validation data\",\"enum\":[\"VIES\"],\"example\":\"VIES\",\"type\":\"string\"},\"valid\":{\"description\":\"Whether the VAT number is valid according to VIES\",\"type\":\"boolean\"},\"vat_number\":{\"description\":\"VAT number without country code prefix\",\"example\":\"190119364\",\"type\":\"string\"},\"vat_number_full\":{\"description\":\"Full VAT number including country code prefix\",\"example\":\"DE190119364\",\"type\":\"string\"}},\"required\":[\"valid\",\"country_code\",\"country_name\",\"vat_number\",\"vat_number_full\",\"checked_at\",\"source\"],\"type\":\"object\"}}},\"description\":\"Successful VAT validation response\"},\"400\":{\"content\":{\"application/json\":{\"schema\":{\"properties\":{\"error\":{\"description\":\"Error message describing what went wrong\",\"type\":\"string\"},\"message\":{\"description\":\"Detailed error information\",\"type\":\"string\"}},\"required\":[\"error\"],\"type\":\"object\"}}},\"description\":\"Bad request - invalid country code or VAT number format\"},\"401\":{\"content\":{\"application/json\":{\"schema\":{\"properties\":{\"error\":{\"description\":\"Error message describing what went wrong\",\"type\":\"string\"},\"message\":{\"description\":\"Detailed error information\",\"type\":\"string\"}},\"required\":[\"error\"],\"type\":\"object\"}}},\"description\":\"Unauthorized - missing or invalid API key\"},\"404\":{\"content\":{\"application/json\":{\"example\":{\"checked_at\":\"2026-04-26T12:00:00+00:00\",\"company_address\":null,\"company_name\":null,\"country_code\":\"DE\",\"country_name\":\"Germany\",\"source\":\"VIES\",\"valid\":false,\"vat_number\":\"190119364\",\"vat_number_full\":\"DE190119364\"},\"schema\":{\"properties\":{\"checked_at\":{\"description\":\"Timestamp of the validation check\",\"example\":\"2026-04-26T12:00:00+00:00\",\"format\":\"date-time\",\"type\":\"string\"},\"company_address\":{\"description\":\"Registered company address from VIES\",\"example\":\"Musterstrasse 1\\n10115 Berlin\",\"nullable\":true,\"type\":\"string\"},\"company_name\":{\"description\":\"Registered company name from VIES\",\"example\":\"EXAMPLE GMBH\",\"nullable\":true,\"type\":\"string\"},\"country_code\":{\"description\":\"Two-letter ISO country code\",\"example\":\"DE\",\"type\":\"string\"},\"country_name\":{\"description\":\"Full country name\",\"example\":\"Germany\",\"type\":\"string\"},\"source\":{\"description\":\"Source of validation data\",\"enum\":[\"VIES\"],\"example\":\"VIES\",\"type\":\"string\"},\"valid\":{\"description\":\"Whether the VAT number is valid according to VIES\",\"type\":\"boolean\"},\"vat_number\":{\"description\":\"VAT number without country code prefix\",\"example\":\"190119364\",\"type\":\"string\"},\"vat_number_full\":{\"description\":\"Full VAT number including country code prefix\",\"example\":\"DE190119364\",\"type\":\"string\"}},\"required\":[\"valid\",\"country_code\",\"country_name\",\"vat_number\",\"vat_number_full\",\"checked_at\",\"source\"],\"type\":\"object\"}}},\"description\":\"VAT number not found or invalid\"},\"429\":{\"content\":{\"application/json\":{\"schema\":{\"properties\":{\"error\":{\"description\":\"Error message describing what went wrong\",\"type\":\"string\"},\"message\":{\"description\":\"Detailed error information\",\"type\":\"string\"}},\"required\":[\"error\"],\"type\":\"object\"}}},\"description\":\"Rate limit exceeded\"},\"500\":{\"content\":{\"application/json\":{\"schema\":{\"properties\":{\"error\":{\"description\":\"Error message describing what went wrong\",\"type\":\"string\"},\"message\":{\"description\":\"Detailed error information\",\"type\":\"string\"}},\"required\":[\"error\"],\"type\":\"object\"}}},\"description\":\"Internal server error or VIES service unavailable\"}},\"security\":[{\"ApiKeyAuth\":[]}],\"securitySchemes\":{\"ApiKeyAuth\":{\"description\":\"API key for authentication. Get your key at https://kiprio.com/vat-api/\",\"in\":\"header\",\"name\":\"X-API-Key\",\"type\":\"apiKey\"}},\"securitySource\":\"operation\"}",
-                    "source": "openapi3",
-                    "version": 1
+                  "k": "http",
+                  "m": "GET",
+                  "o": "/vat/{country}/{number}",
+                  "q": {
+                    "exist": [
+                      "country",
+                      "number"
+                    ]
                   },
-                  "kind": "http",
-                  "method": "GET",
-                  "orig": "/vat/{country}/{number}",
-                  "segments": [
+                  "r": {},
+                  "s": [
                     {
                       "lit": "vat"
                     },
@@ -314,13 +400,7 @@
                       "var": "number"
                     }
                   ],
-                  "select": {
-                    "exist": [
-                      "country",
-                      "number"
-                    ]
-                  },
-                  "transform": {
+                  "t": {
                     "req": "`reqdata`",
                     "res": "`body`"
                   }
@@ -329,11 +409,7 @@
             }
           },
           "relations": {
-            "ancestors": [
-              [
-                "vat"
-              ]
-            ]
+            "ancestors": []
           }
         }
       },
@@ -753,20 +829,20 @@
           "param": {},
           "step": [
             {
-              "active": true,
-              "data": {},
-              "input": {
+              "a": true,
+              "d": {},
+              "i": {
                 "ref": "validate_format_ref01",
                 "srcdatavar": "validate_format_ref01_data",
                 "suffix": "_dt0"
               },
-              "match": {
+              "m": {
                 "country": "country01",
                 "id": "validate_format01"
               },
-              "op": "load",
-              "spec": [],
-              "valid": [
+              "o": "load",
+              "s": [],
+              "v": [
                 {
                   "apply": "TextFieldMark",
                   "def": {
@@ -786,20 +862,20 @@
           "param": {},
           "step": [
             {
-              "active": true,
-              "data": {},
-              "input": {
+              "a": true,
+              "d": {},
+              "i": {
                 "ref": "vat_ref01",
                 "srcdatavar": "vat_ref01_data",
                 "suffix": "_dt0"
               },
-              "match": {
+              "m": {
                 "country": "country01",
                 "id": "vat01"
               },
-              "op": "load",
-              "spec": [],
-              "valid": [
+              "o": "load",
+              "s": [],
+              "v": [
                 {
                   "apply": "TextFieldMark",
                   "def": {

@@ -16,12 +16,6 @@ const FEATURE_CLASS: Record<string, typeof BaseFeature> = {
 }
 
 
-// Per-feature plugin DEFINITIONS (voxgig/plugin `Definition` values), from
-// the model's active plugin groups. A feature that takes a `plugins` option
-// (secrets over sekreto) reads its own entry; a feature with no plugins has
-// none. Named imports above make each definition statically reachable, so
-// an SDK carries exactly the plugin modules its model selects — the same
-// leanness the old side-effect registry imports bought, without a registry.
 const FEATURE_PLUGINS: Record<string, any[]> = {
   
 }
@@ -32,7 +26,6 @@ class Config {
   makeFeature(this: any, fn: string) {
     const fc = FEATURE_CLASS[fn]
     const fi = new fc()
-    // TODO: errors etc
     return fi
   }
 
@@ -146,51 +139,59 @@ class Config {
     "validate_format": {
       "fields": [
         {
-          "format": "date-time",
           "name": "checked_at",
+          "title": "Checked At",
+          "type": "`$STRING`",
           "req": true,
           "short": "Timestamp of the validation check",
-          "type": "`$STRING`"
+          "format": "date-time"
         },
         {
           "name": "country_code",
+          "title": "Country Code",
+          "type": "`$STRING`",
           "req": true,
-          "short": "Two-letter ISO country code",
-          "type": "`$STRING`"
+          "short": "Two-letter ISO country code"
         },
         {
           "name": "country_name",
+          "title": "Country Name",
+          "type": "`$STRING`",
           "req": true,
-          "short": "Full country name",
-          "type": "`$STRING`"
+          "short": "Full country name"
         },
         {
           "name": "id",
+          "title": "Id",
           "type": "`$STRING`"
         },
         {
           "name": "source",
+          "title": "Source",
+          "type": "`$STRING`",
           "req": true,
-          "short": "Source of validation",
-          "type": "`$STRING`"
+          "short": "Source of validation"
         },
         {
           "name": "valid",
+          "title": "Valid",
+          "type": "`$BOOLEAN`",
           "req": true,
-          "short": "Whether the VAT number format is valid according to country-specific rules",
-          "type": "`$BOOLEAN`"
+          "short": "Whether the VAT number format is valid according to country-specific rules"
         },
         {
           "name": "vat_number",
+          "title": "Vat Number",
+          "type": "`$STRING`",
           "req": true,
-          "short": "VAT number without country code prefix",
-          "type": "`$STRING`"
+          "short": "VAT number without country code prefix"
         },
         {
           "name": "vat_number_full",
+          "title": "Vat Number Full",
+          "type": "`$STRING`",
           "req": true,
-          "short": "Full VAT number including country code prefix",
-          "type": "`$STRING`"
+          "short": "Full VAT number including country code prefix"
         }
       ],
       "id": {
@@ -212,26 +213,6 @@ class Config {
           "name": "load",
           "points": [
             {
-              "args": {
-                "params": [
-                  {
-                    "example": "DE",
-                    "kind": "param",
-                    "name": "country",
-                    "orig": "country",
-                    "reqd": true,
-                    "type": "`$STRING`"
-                  },
-                  {
-                    "example": "190119364",
-                    "kind": "param",
-                    "name": "number",
-                    "orig": "number",
-                    "reqd": true,
-                    "type": "`$STRING`"
-                  }
-                ]
-              },
               "kind": "http",
               "method": "GET",
               "orig": "/vat/validate-format/{country}/{number}",
@@ -249,92 +230,119 @@ class Config {
                   "var": "number"
                 }
               ],
-              "select": {
-                "exist": [
-                  "country",
-                  "number"
-                ]
-              },
-              "transform": {
-                "req": "`reqdata`",
-                "res": "`body`"
-              },
               "parts": [
                 "vat",
                 "validate-format",
                 "{country}",
                 "{number}"
-              ]
+              ],
+              "rename": {},
+              "transform": {
+                "req": "`reqdata`",
+                "res": "`body`"
+              },
+              "args": {
+                "params": [
+                  {
+                    "name": "country",
+                    "orig": "country",
+                    "type": "`$STRING`",
+                    "kind": "param",
+                    "reqd": true,
+                    "example": "DE"
+                  },
+                  {
+                    "name": "number",
+                    "orig": "number",
+                    "type": "`$STRING`",
+                    "kind": "param",
+                    "reqd": true,
+                    "example": "190119364"
+                  }
+                ]
+              },
+              "select": {
+                "exist": [
+                  "country",
+                  "number"
+                ]
+              }
             }
           ]
         }
       },
       "relations": {
-        "ancestors": [
-          [
-            "validate_format"
-          ]
-        ]
+        "ancestors": []
       }
     },
     "vat": {
       "fields": [
         {
-          "format": "date-time",
           "name": "checked_at",
+          "title": "Checked At",
+          "type": "`$STRING`",
           "req": true,
           "short": "Timestamp of the validation check",
-          "type": "`$STRING`"
+          "format": "date-time"
         },
         {
           "name": "company_address",
-          "short": "Registered company address from VIES",
-          "type": "`$STRING`"
+          "title": "Company Address",
+          "type": "`$STRING`",
+          "short": "Registered company address from VIES"
         },
         {
           "name": "company_name",
-          "short": "Registered company name from VIES",
-          "type": "`$STRING`"
+          "title": "Company Name",
+          "type": "`$STRING`",
+          "short": "Registered company name from VIES"
         },
         {
           "name": "country_code",
+          "title": "Country Code",
+          "type": "`$STRING`",
           "req": true,
-          "short": "Two-letter ISO country code",
-          "type": "`$STRING`"
+          "short": "Two-letter ISO country code"
         },
         {
           "name": "country_name",
+          "title": "Country Name",
+          "type": "`$STRING`",
           "req": true,
-          "short": "Full country name",
-          "type": "`$STRING`"
+          "short": "Full country name"
         },
         {
           "name": "id",
+          "title": "Id",
           "type": "`$STRING`"
         },
         {
           "name": "source",
+          "title": "Source",
+          "type": "`$STRING`",
           "req": true,
-          "short": "Source of validation data",
-          "type": "`$STRING`"
+          "short": "Source of validation data"
         },
         {
           "name": "valid",
+          "title": "Valid",
+          "type": "`$BOOLEAN`",
           "req": true,
-          "short": "Whether the VAT number is valid according to VIES",
-          "type": "`$BOOLEAN`"
+          "short": "Whether the VAT number is valid according to VIES"
         },
         {
           "name": "vat_number",
+          "title": "Vat Number",
+          "type": "`$STRING`",
           "req": true,
-          "short": "VAT number without country code prefix",
-          "type": "`$STRING`"
+          "short": "VAT number without country code prefix"
         },
         {
           "name": "vat_number_full",
+          "title": "Vat Number Full",
+          "type": "`$STRING`",
           "req": true,
-          "short": "Full VAT number including country code prefix",
-          "type": "`$STRING`"
+          "short": "Full VAT number including country code prefix"
         }
       ],
       "id": {
@@ -356,26 +364,6 @@ class Config {
           "name": "load",
           "points": [
             {
-              "args": {
-                "params": [
-                  {
-                    "example": "DE",
-                    "kind": "param",
-                    "name": "country",
-                    "orig": "country",
-                    "reqd": true,
-                    "type": "`$STRING`"
-                  },
-                  {
-                    "example": "190119364",
-                    "kind": "param",
-                    "name": "number",
-                    "orig": "number",
-                    "reqd": true,
-                    "type": "`$STRING`"
-                  }
-                ]
-              },
               "kind": "http",
               "method": "GET",
               "orig": "/vat/{country}/{number}",
@@ -390,31 +378,48 @@ class Config {
                   "var": "number"
                 }
               ],
+              "parts": [
+                "vat",
+                "{country}",
+                "{number}"
+              ],
+              "rename": {},
+              "transform": {
+                "req": "`reqdata`",
+                "res": "`body`"
+              },
+              "args": {
+                "params": [
+                  {
+                    "name": "country",
+                    "orig": "country",
+                    "type": "`$STRING`",
+                    "kind": "param",
+                    "reqd": true,
+                    "example": "DE"
+                  },
+                  {
+                    "name": "number",
+                    "orig": "number",
+                    "type": "`$STRING`",
+                    "kind": "param",
+                    "reqd": true,
+                    "example": "190119364"
+                  }
+                ]
+              },
               "select": {
                 "exist": [
                   "country",
                   "number"
                 ]
-              },
-              "transform": {
-                "req": "`reqdata`",
-                "res": "`body`"
-              },
-              "parts": [
-                "vat",
-                "{country}",
-                "{number}"
-              ]
+              }
             }
           ]
         }
       },
       "relations": {
-        "ancestors": [
-          [
-            "vat"
-          ]
-        ]
+        "ancestors": []
       }
     }
   }

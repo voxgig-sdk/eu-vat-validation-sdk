@@ -37,15 +37,11 @@ const client = new EuVatValidationSDK({
 
 ### 3. Load a validateformat
 
-ValidateFormat is nested under country, so provide the `country`.
 `load()` returns the entity directly and throws on failure:
 
 ```ts
 try {
-  const validateformat = await client.ValidateFormat().load({
-    country: 'example_country',
-    number: 'example_number',
-  })
+  const validateformat = await client.ValidateFormat().load({ country: 'example_country', number: 'example_number' })
   console.log(validateformat)
 } catch (err) {
   console.error('load failed:', err)
