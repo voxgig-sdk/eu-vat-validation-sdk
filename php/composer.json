@@ -1,5 +1,5 @@
 {
-  "name": "voxgig-sdk/eu-vat-validation",
+  "name": "voxgig-sdk/eu-vat-validation-sdk",
   "description": "Unofficial generated PHP SDK for the EU VAT Validation public API. Not affiliated with or endorsed by the upstream API provider.",
   "type": "library",
   "keywords": ["voxgig", "sdk", "generated-sdk", "openapi", "api-client", "eu-vat-validation"],
