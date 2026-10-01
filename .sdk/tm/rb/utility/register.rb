@@ -33,6 +33,8 @@ require_relative 'transform_response'
 
 EuVatValidationUtility.registrar = ->(u) {
   u.clean = EuVatValidationUtilities::Clean
+  u.clean_add = EuVatValidationUtilities::CleanAdd
+  u.clean_explain = EuVatValidationUtilities::CleanExplain
   u.done = EuVatValidationUtilities::Done
   u.make_error = EuVatValidationUtilities::MakeError
   u.feature_add = EuVatValidationUtilities::FeatureAdd

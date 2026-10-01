@@ -37,6 +37,8 @@ require_once __DIR__ . '/TransformResponse.php';
 
 EuVatValidationUtility::setRegistrar(function (EuVatValidationUtility $u): void {
     $u->clean = [EuVatValidationClean::class, 'call'];
+    $u->clean_add = [EuVatValidationClean::class, 'add'];
+    $u->clean_explain = [EuVatValidationDone::class, 'clean_explain'];
     $u->done = [EuVatValidationDone::class, 'call'];
     $u->make_error = [EuVatValidationMakeError::class, 'call'];
     $u->feature_add = [EuVatValidationFeatureAdd::class, 'call'];

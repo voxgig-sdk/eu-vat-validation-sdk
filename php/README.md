@@ -12,9 +12,14 @@ The SDK exposes the API as capitalised, semantic **Entities** — for example `$
 
 ## Install
 This package is not yet published to Packagist. Install it from the
-GitHub release tag (`php/vX.Y.Z`):
+GitHub release tag (`php/vX.Y.Z`, see [Releases](https://github.com/voxgig-sdk/eu-vat-validation-sdk/releases)), or
+from a clone as a Composer path repository:
 
-- Releases: [https://github.com/voxgig-sdk/eu-vat-validation-sdk/releases](https://github.com/voxgig-sdk/eu-vat-validation-sdk/releases)
+```bash
+git clone https://github.com/voxgig-sdk/eu-vat-validation-sdk
+composer config repositories.eu-vat-validation-sdk path ./eu-vat-validation-sdk/php
+composer require voxgig-sdk/eu-vat-validation-sdk:@dev
+```
 
 
 ## Tutorial: your first API call
