@@ -3,5 +3,21 @@
     "SUMMARY.md"
   ],
   "config": ".sdk/doc/qa/vale.ini",
-  "routes": {}
+  "routes": {},
+  "quoted": {
+    "SUMMARY.md": [
+      "API key for authentication. Get your key at https://kiprio.com/vat-api/",
+      "Full country name",
+      "Production server",
+      "Registered company address from VIES",
+      "Registered company name from VIES",
+      "Source of validation",
+      "Successful VAT validation response",
+      "Successful format validation response",
+      "This API enables real-time validation of EU VAT numbers using the official VIES service. It provides not only the validity of the VAT number but also the associated company&#39;s name and address in a single JSON response. Supports all 27 EU member states plus Northern Ireland (XI).",
+      "Timestamp of the validation check",
+      "Two-letter ISO country code",
+      "Whether the VAT number format is valid according to country-specific rules"
+    ]
+  }
 }

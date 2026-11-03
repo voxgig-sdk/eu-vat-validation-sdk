@@ -6,6 +6,20 @@ local sdk = require("eu-vat-validation_sdk")
 local helpers = require("core.helpers")
 local runner = require("test.runner")
 
+-- main.kit.test.live.strict is true (the default is true): a live
+-- request that fails, or a live test missing an input it needs,
+-- fails the test.
+-- An account with no record for a test to read skips it either way.
+local LIVE_STRICT = true
+
+local function live_ok(result, err)
+  if err ~= nil or type(result) ~= "table" or result["err"] ~= nil or not result["ok"] then
+    return false
+  end
+  local status = helpers.to_int(result["status"])
+  return status >= 200 and status < 300
+end
+
 describe("ValidateFormatDirect", function()
   it("should direct-load-validate_format", function()
     local setup = validate_format_direct_setup({ id = "direct01" })
@@ -33,22 +47,13 @@ describe("ValidateFormatDirect", function()
       query = query,
     })
     if setup.live then
-      -- Live mode is lenient: synthetic IDs frequently 4xx. Skip rather
-      -- than fail when the load endpoint isn't reachable with the IDs we
-      -- can construct from setup.idmap.
-      if err ~= nil then
-        pending("load call failed (likely synthetic IDs against live API): " .. tostring(err))
-        return
+      if not live_ok(result, err) then
+        runner.live_miss(pending, LIVE_STRICT, "Live load failed: " .. runner.live_describe(result, err))
       end
-      if not result["ok"] then
-        pending("load call not ok (likely synthetic IDs against live API)")
-        return
+      if result["data"] == nil then
+        runner.live_miss(pending, LIVE_STRICT, "Live load returned no data: " .. runner.live_describe(result, err))
       end
-      local status = helpers.to_int(result["status"])
-      if status < 200 or status >= 300 then
-        pending("expected 2xx status, got " .. tostring(status))
-        return
-      end
+      assert.is_not_nil(result["data"])
     else
       assert.is_nil(err)
       assert.is_true(result["ok"])
@@ -89,11 +94,21 @@ function validate_format_direct_setup(mockres)
       end
     end
     local client = sdk.new(merged_opts)
+    local idmap = env["EU_VAT_VALIDATION_TEST_VALIDATE_FORMAT_ENTID"]
+    if type(idmap) ~= "table" then
+      idmap = {}
+    end
+    -- A path parameter's example stands in for an id *_ENTID does not give.
+    for _k, _v in pairs({["country01"] = "DE", ["number01"] = "190119364"}) do
+      if idmap[_k] == nil then
+        idmap[_k] = _v
+      end
+    end
     return {
       client = client,
       calls = calls,
       live = true,
-      idmap = {},
+      idmap = type(idmap) == "table" and idmap or {},
     }
   end
 

@@ -16,7 +16,7 @@ go get github.com/voxgig-sdk/eu-vat-validation-sdk/go@latest
 ```
 
 The Go module proxy resolves the version from the `go/vX.Y.Z` GitHub
-release tag — see [Releases](https://github.com/voxgig-sdk/eu-vat-validation-sdk/releases) for the available versions.
+release tag — see [Tags](https://github.com/voxgig-sdk/eu-vat-validation-sdk/tags) for the available versions.
 
 To vendor from a local checkout instead, clone this repo alongside your
 project and add a `replace` directive pointing at the checked-out
@@ -30,14 +30,15 @@ go mod edit -replace github.com/voxgig-sdk/eu-vat-validation-sdk/go=../eu-vat-va
 ## Tutorial: your first API call
 
 This tutorial walks through creating a client, listing entities, and
-loading a specific record.
+loading a specific record. The client sends the API key in the `X-API-Key` header.
 
 ### Quickstart
 
 A complete program: create a client, then call the entity operations.
-Each operation returns `(value, error)` — the value is the data itself
-(there is no `{ok, data}` wrapper), so check `err` and use the value
-directly.
+Each operation returns `(value, error)` — the value is the entity, and for
+`List` a `[]any` of entities, one per record (there is no `{ok, data}`
+wrapper), so check `err` and read a record through the entity's
+`Data()`.
 
 ```go
 package main
@@ -53,12 +54,12 @@ func main() {
         "apikey": os.Getenv("EU_VAT_VALIDATION_APIKEY"),
     })
 
-    // Load a single validateFormat — the value is the loaded record.
+    // Load a single validateFormat — the value is the entity; Data() reads its record.
     validateFormat, err := client.ValidateFormat(nil).Load(map[string]any{"country": "example_country", "number": "example_number"}, nil)
     if err != nil {
         panic(err)
     }
-    fmt.Println(validateFormat)
+    fmt.Println(validateFormat.(sdk.Entity).Data())
 }
 ```
 
@@ -144,7 +145,7 @@ validateFormat, err := client.ValidateFormat(nil).Load(
 if err != nil {
     panic(err)
 }
-fmt.Println(validateFormat) // the returned mock data
+fmt.Println(validateFormat.(sdk.Entity).Data()) // the entity's mock record
 ```
 
 ### Use a custom fetch function
@@ -223,16 +224,16 @@ Creates a test-mode client with mock transport. Both arguments may be `nil`.
 | `GetUtility` | `() *Utility` | Copy of the SDK utility object. |
 | `Prepare` | `(fetchargs map[string]any) (map[string]any, error)` | Build an HTTP request definition without sending. |
 | `Direct` | `(fetchargs map[string]any) (map[string]any, error)` | Build and send an HTTP request. |
-| `ValidateFormat` | `(data map[string]any) EuVatValidationEntity` | Create a ValidateFormat entity instance. |
-| `Vat` | `(data map[string]any) EuVatValidationEntity` | Create a Vat entity instance. |
+| `ValidateFormat` | `(data map[string]any) EuVatValidationEntityBase` | Create a ValidateFormat entity instance. |
+| `Vat` | `(data map[string]any) EuVatValidationEntityBase` | Create a Vat entity instance. |
 
-### Entity interface (EuVatValidationEntity)
+### Entity interface (EuVatValidationEntityBase)
 
-All entities implement the `EuVatValidationEntity` interface.
+All entities implement the `EuVatValidationEntityBase` interface.
 
 | Method | Signature | Description |
 | --- | --- | --- |
-| `Load` | `(reqmatch, ctrl map[string]any) (any, error)` | Load a single entity by match criteria. |
+| `Load` | `(reqmatch, ctrl map[string]any) (any, error)` | Load a single entity by match criteria, and return it. |
 | `Data` | `(args ...any) any` | Get or set entity data. |
 | `Match` | `(args ...any) any` | Get or set entity match criteria. |
 | `Make` | `() Entity` | Create a new instance with the same options. |
@@ -240,20 +241,20 @@ All entities implement the `EuVatValidationEntity` interface.
 
 ### Result shape
 
-Entity operations return `(value, error)`. The `value` is the
-operation's data **directly** — there is no wrapper:
+Entity operations return `(value, error)`. The `value` is the entity
+itself — there is no wrapper:
 
 | Operation | `value` |
 | --- | --- |
-| `Load` | the entity record (`map[string]any`) |
+| `Load` | the entity, whose `Data()` reads its record (`map[string]any`) |
 
 Check `err` first, then use the value directly (or the typed
 `...Typed` variants, which return the entity's model struct and a typed
 slice):
 
-    validateFormat, err := client.ValidateFormat(nil).Load(nil, nil)
+    validateFormat, err := client.ValidateFormat(nil).Load(map[string]any{"country": "example", "number": "example"}, nil)
     if err != nil { /* handle */ }
-    // validateFormat is the returned record
+    // validateFormat is the entity; validateFormat.(sdk.Entity).Data() reads its record
 
 Only `Direct()` returns a response envelope — a `map[string]any` with
 `"ok"`, `"status"`, `"headers"`, and `"data"` keys.
@@ -331,7 +332,7 @@ validateFormat, err := client.ValidateFormat(nil).Load(map[string]any{"country":
 if err != nil {
     panic(err)
 }
-fmt.Println(validateFormat) // the loaded record
+fmt.Println(validateFormat.(sdk.Entity).Data()) // the loaded entity's record
 ```
 
 
@@ -367,7 +368,7 @@ vat, err := client.Vat(nil).Load(map[string]any{"country": "country", "number": 
 if err != nil {
     panic(err)
 }
-fmt.Println(vat) // the loaded record
+fmt.Println(vat.(sdk.Entity).Data()) // the loaded entity's record
 ```
 
 ## Features
@@ -504,7 +505,9 @@ The Go SDK uses `map[string]any` throughout rather than typed structs.
 This mirrors the dynamic nature of the API and keeps the SDK
 flexible — no code generation is needed when the API schema changes.
 
-Use `core.ToMapAny()` to safely cast results and nested data.
+An operation returns the entity, and its `Data()` returns the record. Use
+`core.ToMapAny()` to safely cast that record, or data nested in it, to
+`map[string]any`: it returns `nil` for anything else, an entity included.
 
 ### Package structure
 

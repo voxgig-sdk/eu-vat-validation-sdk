@@ -115,6 +115,10 @@ main: kit: entity: validate_format: {
               "number"
             ]
           }
+          rs: {
+            kind: "json"
+            media: "application/json"
+          }
           s: [
             {
               lit: "vat"

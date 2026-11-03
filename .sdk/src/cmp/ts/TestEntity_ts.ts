@@ -1,6 +1,6 @@
 import { boundedFacts, pointFacts } from '@voxgig/sdkgen'
 import { buildIdNames } from '@voxgig/sdkgen'
-import { flowSteps } from '@voxgig/sdkgen'
+import { flowSteps, opReachable, invalidRequest } from '@voxgig/sdkgen'
 
 import * as Path from 'node:path'
 
@@ -36,16 +36,38 @@ import {
   serverVarEnv,
   serverVariables,
   isHttpBasicAuth,
-  entityDataIdField, envName, envToken,
+  entityDataIdField, entityRecordIdField, envName, envToken,
   jsKey,
   jsProp,
   hasLiveScenarios,
+  liveStrict,
+  liveStrictNote,
+  liveEntity,
+  liveGates,
+  liveFlowRoutes,
+  flowLoadRoute,
+  flowLoadReadsRecord,
+  LIVE_GETONLY_ENV,
 } from '@voxgig/sdkgen'
+import type { LiveGate } from '@voxgig/sdkgen'
 
 
 import {
   projectPath
 } from './utility_ts'
+
+
+// The steps a live run leaves out, for the live harness: a GET-only run's
+// when the guard is set, else those any live run leaves out.
+function excludedArg(entity: any, flow: any): string {
+  const gates = liveGates(entity, flow)
+  const getOnly = gates.find((gate) => gate.getOnly)
+  const any = gates.find((gate) => !gate.getOnly)
+  const map = (gate?: LiveGate) => JSON.stringify(
+    Object.fromEntries((gate?.plan.excluded || []).map(({ id, reason }) => [id, reason])))
+  return null != getOnly ? `, 'TRUE' === process.env.${LIVE_GETONLY_ENV} ? ${map(getOnly)} : ${map(any)}` :
+    0 < (any?.plan.excluded.length || 0) ? ', ' + map(any) : ''
+}
 
 
 type GenCtx = {
@@ -115,12 +137,22 @@ const TestEntity = cmp(function TestEntity(props: any) {
           return;
         }
 
+        Slot({ name: 'failure' }, () => {
+          if (opReachable((entity.op as any)?.list, [])) {
+            Content(failureTests(model, entity))
+          }
+          Content(validateTest(model, entity))
+        })
+
         const indent = 2
 
         const idlist = buildIdNames(entity, basicflow)
 
         Slot({ name: 'basicSetup' }, () => {
           Content(`
+${liveStrictNote(liveStrict(model, target.name), '//')}
+const LIVE_STRICT = ${liveStrict(model, target.name)}
+
 function basicSetup(extra?: any) {
   // TODO: fix test def options
   const options: any = {} // ${jsonify(basicflow.test, { offset: indent - 2 })}
@@ -135,7 +167,7 @@ function basicSetup(extra?: any) {
 
   // TODO: need a xlang JSON parse utility in voxgig/struct with better error msgs
   const entityData = JSON.parse(entityDataSource)
-
+${fixtureIdentity(entity)}
   options.entity = entityData.existing
 
   let client = ${model.Name}SDK.test(options, extra)
@@ -228,7 +260,7 @@ function basicSetup(extra?: any) {
     ${hasLiveScenarios(model) ? `if (live) { t.skip('Covered by live operation scenarios'); return }` : ''}
     const setup = basicSetup()
     if (setup.live) {
-      return runLiveEntity(setup, ${JSON.stringify(entity)}, ${JSON.stringify(basicflow)}, '${nom(entity, 'Name')}', ${JSON.stringify(liveFacts)})
+      return runLiveEntity(setup, ${JSON.stringify(liveEntity(ctx$, entity))}, ${JSON.stringify(liveFlowRoutes(entity, basicflow))}, '${nom(entity, 'Name')}', ${JSON.stringify(liveFacts)}, { strict: LIVE_STRICT, t }${excludedArg(entity, basicflow)})
     }
     const client = setup.client
     const struct = setup.struct
@@ -317,7 +349,7 @@ const generateCreate: OpGen = (ctx, step, index) => {
     ${datavar} = (await ${entvar}.create(${datavar})).data()
 `)
   if (hasEntIdC) {
-    Content(`    assert(null != ${datavar}.id)
+    Content(`    assert(null != ${rid(entity, datavar)})
 `)
   }
   else {
@@ -366,12 +398,12 @@ const generateList: OpGen = (ctx, step, index) => {
 
     if ('ItemExists' === validator.apply && hasRefData && hasDataId) {
       Content(`
-    assert(!isempty(select(${listvar}, { id: ${validRef}_data.id })))
+    assert(!isempty(select(${listvar}, { ${jsKey(entityRecordIdField(entity))}: ${rid(entity, validRef + '_data')} })))
 `)
     }
     else if ('ItemNotExists' === validator.apply && hasRefData && hasDataId) {
       Content(`
-    assert(isempty(select(${listvar}, { id: ${validRef}_data.id })))
+    assert(isempty(select(${listvar}, { ${jsKey(entityRecordIdField(entity))}: ${rid(entity, validRef + '_data')} })))
 `)
     }
   }
@@ -403,13 +435,15 @@ const generateUpdate: OpGen = (ctx, step, index) => {
   Content(`    const ${datavar}: any = {}
 `)
   if (hasEntIdU) {
-    Content(`    ${datavar}.id = ${srcdatavar}.id
+    Content(`    ${datavar}.id = ${rid(entity, srcdatavar)}
 `)
   }
 
+  // A parent id is keyed in idmap by its fixture name (step.d's value); a
+  // live ENTID may key it by the field name instead.
   each(step.d, (mi: any) => {
     if ('id' !== mi.key$) {
-      Content(`    ${datavar} ['${mi.key$}'] = setup.idmap['${mi.key$}']
+      Content(`    ${datavar}['${mi.key$}'] = setup.idmap['${mi.key$}'] ?? setup.idmap['${mi.val$}']
 `)
     }
   })
@@ -431,7 +465,7 @@ const generateUpdate: OpGen = (ctx, step, index) => {
     const ${resdatavar} = (await ${entvar}.update(${datavar})).data()
 `)
   if (hasEntIdU) {
-    Content(`    assert(${resdatavar}.id === ${datavar}.id)
+    Content(`    assert(${rid(entity, resdatavar)} === ${datavar}.id)
 `)
   }
   else {
@@ -483,7 +517,7 @@ const generateLoad: OpGen = (ctx, step, index) => {
   const loadPoint = loadOp?.points?.[0]
   const loadPathParams = loadPoint?.g?.params || []
   const loadHasRequiredParams = loadPathParams.some((p: any) => p.r !== false)
-  if (!hasEntId && loadHasRequiredParams) {
+  if (!hasEntId && loadHasRequiredParams && null == flowLoadRoute(entity, step)) {
     if (!hasEntVar) {
       Content(`
     // LOAD: skipped — no entity id field and load requires path params.
@@ -501,20 +535,27 @@ const generateLoad: OpGen = (ctx, step, index) => {
     Content(`    const ${entvar} = client.${nom(entity, 'Name')}()
 `)
   }
-  if (!hasSrcData && hasEntId) {
+  if (!hasSrcData && (hasEntId || flowLoadReadsRecord(entity, step))) {
     Content(`    const ${srcdatavar} = Object.values(setup.data.existing.${entity.name})[0] as any
 `)
   }
+  Content(`    const ${matchvar}: any = {}
+`)
   if (hasEntId) {
-    Content(`    const ${matchvar}: any = {}
-    ${matchvar}.id = ${srcdatavar}.id
-    const ${datavar} = (await ${entvar}.load(${matchvar})).data()
-    assert(${datavar}.id === ${srcdatavar}.id)
+    Content(`    ${matchvar}.id = ${rid(entity, srcdatavar)}
+`)
+    loadMatch(entity, step, matchvar, srcdatavar)
+  }
+  else {
+    loadMatch(entity, step, matchvar, srcdatavar)
+  }
+  if (hasEntId) {
+    Content(`    const ${datavar} = (await ${entvar}.load(${matchvar})).data()
+    assert(${rid(entity, datavar)} === ${rid(entity, srcdatavar)})
 `)
   }
   else {
-    Content(`    const ${matchvar}: any = {}
-    const ${datavar} = (await ${entvar}.load(${matchvar})).data()
+    Content(`    const ${datavar} = (await ${entvar}.load(${matchvar})).data()
     assert(null != ${datavar})
 `)
   }
@@ -550,9 +591,69 @@ const generateRemove: OpGen = (ctx, step, index) => {
   // Always match the prior-created entity by id. The mock test feature
   // removes the first match in entmap, so without a specific id the
   // result depends on hash-sort order and flakes (see cheapshark).
-  Content(`    const ${matchvar}: any = { id: ${srcdatavar}.id }
-    await ${entvar}.remove(${matchvar})
+  Content(`    const ${matchvar}: any = { id: ${rid(entity, srcdatavar)} }
+`)
+  parentMatch(step, matchvar)
+  Content(`    await ${entvar}.remove(${matchvar})
   `)
+}
+
+
+// The record field the entity's identity is read from, on a record.
+function rid(entity: any, record: string): string {
+  return jsProp(record, entityRecordIdField(entity))
+}
+
+
+// The fixture keeps each record's key in `id`; an entity keeping its identity
+// in another field reads the key from there too.
+function fixtureIdentity(entity: any): string {
+  const field = entityRecordIdField(entity)
+  return 'id' === field ? '' : `
+  for (const rec of Object.values(entityData.existing?.[${JSON.stringify(entity.name)}] ?? {}) as any[]) {
+    if (null != rec?.id) ${jsProp('rec', field)} = rec.id
+  }
+`
+}
+
+
+// A child's route names its parents, and an entity no earlier step has
+// filled knows none of them, so the call itself gives each parent id.
+function parentMatch(step: any, matchvar: string) {
+  each(step.m, (mi: any) => {
+    if ('id' !== mi.key$ && !mi.key$.endsWith('$')) {
+      Content(`    ${matchvar}['${mi.key$}'] = setup.idmap['${mi.key$}'] ?? setup.idmap['${mi.val$}']
+`)
+    }
+  })
+}
+
+
+// A load of a known record fills its route from that record, and from the
+// step's binding where the record holds no scalar for it. A record only the
+// fixture holds replaces the step's binding, which the live harness keeps.
+function loadMatch(entity: any, step: any, matchvar: string, srcdatavar: string) {
+  const route = flowLoadRoute(entity, step)
+  if (null == route) {
+    return parentMatch(step, matchvar)
+  }
+  if (route.offline) {
+    parentMatch(step, matchvar)
+    for (const arg of route.args.filter((arg) => null != arg.field)) {
+      const own = `${srcdatavar}['${arg.field}']`
+      Content(`    if (['string', 'number', 'boolean'].includes(typeof ${own})) ${matchvar}['${arg.name}'] = ${own}
+`)
+    }
+    return
+  }
+  for (const arg of route.args) {
+    const bound = arg.idmap.map((key) => `setup.idmap['${key}']`).join(' ?? ')
+    const own = `${srcdatavar}['${arg.field}']`
+    Content(null == arg.field ? `    ${matchvar}['${arg.name}'] = ${bound}
+` : `    ${matchvar}['${arg.name}'] = ['string', 'number', 'boolean'].includes(typeof ${own}) ?
+      ${own} : ${bound}
+`)
+  }
 }
 
 
@@ -562,6 +663,84 @@ const GENERATE_OP: Record<string, OpGen> = {
   update: generateUpdate,
   load: generateLoad,
   remove: generateRemove,
+}
+
+
+// A failed operation rejects a stream as it rejects the operation: a
+// transport failure, and a hook that rejects the call. A throwing hook fires
+// PreUnexpected, and under throw false the call resolves to undefined. The
+// caller's ctrl stays its own.
+function failureTests(model: Model, entity: ModelEntity): string {
+  const SDK = model.Name + 'SDK'
+  const Entity = nom(entity, 'Name')
+  return `
+  class FailHook extends BaseFeature {
+    name = 'failhook'
+    version = '0.0.1'
+    active = true
+    unexpected = 0
+    init() { }
+    PreSpec() { throw new Error('${entity.name} hook failed') }
+    PreUnexpected() { this.unexpected++ }
+  }
+
+  test('stream-error', async () => {
+    const offline = { net: { offline: true } }
+    await assert.rejects(async () => {
+      for await (const _item of ${SDK}.test(offline).${Entity}().stream('list')) { }
+    }, /offline/)
+
+    for await (const _item of ${SDK}.test(offline).${Entity}()
+      .stream('list', undefined, { ctrl: { throw: false } })) { }
+
+    if (null != (config as any).feature?.rbac) {
+      const denied = ${SDK}.test(undefined, { feature: { rbac: { active: true, deny: true } } })
+      await assert.rejects(async () => {
+        for await (const _item of denied.${Entity}().stream('list')) { }
+      }, (err: any) => 'rbac_denied' === err.code)
+    }
+  })
+
+  test('stream-ctrl', async () => {
+    const explain: any = {}
+    const ctrl: any = { explain }
+    for await (const _item of ${SDK}.test().${Entity}().stream('list', undefined, { ctrl })) { }
+    assert.deepStrictEqual(Object.keys(ctrl), ['explain'])
+    assert(explain === ctrl.explain && 0 < Object.keys(explain).length)
+  })
+
+  test('unexpected', async () => {
+    const hook = new FailHook()
+    const client = new ${SDK}({ feature: { test: { active: true } }, extend: [hook] })
+    await assert.rejects(client.${Entity}().list(), /hook failed/)
+    assert(0 < hook.unexpected)
+
+    const fired = hook.unexpected
+    assert.strictEqual(await client.${Entity}().list(undefined, { throw: false }), undefined)
+    assert(fired < hook.unexpected)
+  })
+`
+}
+
+
+// An invalid request fails with validate's own error, before it is sent.
+function validateTest(model: Model, entity: ModelEntity): string {
+  const bad = invalidRequest(entity)
+  if (null == bad) {
+    return ''
+  }
+  const SDK = model.Name + 'SDK'
+  return `
+  test('validate', async (t) => {
+    if (null == (config as any).feature?.validate) {
+      t.skip('feature not present in this SDK: validate')
+      return
+    }
+    const client = ${SDK}.test(undefined, { feature: { validate: { active: true } } })
+    await assert.rejects(client.${nom(entity, 'Name')}().${bad.op}(${JSON.stringify(bad.args)} as any),
+      (err: any) => 'validate_failed' === err.code)
+  })
+`
 }
 
 

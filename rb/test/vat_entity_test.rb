@@ -6,29 +6,45 @@ require_relative "../EuVatValidation_sdk"
 require_relative "runner"
 
 class VatEntityTest < Minitest::Test
+  # main.kit.test.live.strict is true (the default is true): a live
+  # request that fails, or a live test missing an input it needs,
+  # fails the test.
+  # An account with no record for a test to read skips it either way.
+  LIVE_STRICT = true
+
   def test_create_instance
     testsdk = EuVatValidationSDK.test(nil, nil)
     ent = testsdk.Vat(nil)
     assert !ent.nil?
   end
 
+  def test_validate
+    cfg = EuVatValidationConfig.shared_config
+    unless cfg["feature"].is_a?(Hash) && cfg["feature"].key?("validate")
+      skip("feature not present in this SDK: validate")
+    end
+    client = EuVatValidationSDK.test(nil, { "feature" => { "validate" => { "active" => true } } })
+    err = assert_raises(StandardError) do
+      client.Vat(nil).load({ "country" => 1, "number" => "x" }, nil)
+    end
+    assert_equal "validate_failed", err.code
+  end
+
   def test_basic_flow
     setup = vat_basic_setup(nil)
     # Per-op sdk-test-control.json skip.
     _live = setup[:live] || false
-    ["load"].each do |_op|
+    [].each do |_op|
       _should_skip, _reason = Runner.is_control_skipped("entityOp", "vat." + _op, _live ? "live" : "unit")
       if _should_skip
         skip(_reason || "skipped via sdk-test-control.json")
         return
       end
     end
-    # The basic flow consumes synthetic IDs from the fixture. In live mode
-    # without an *_ENTID env override, those IDs hit the live API and 4xx.
-    if setup[:synthetic_only]
-      skip "live entity test uses synthetic IDs from fixture — set EU_VAT_VALIDATION_TEST_VAT_ENTID JSON to run live"
-      return
+    if setup[:live]
+      skip("Live coverage incomplete: the flow has no step to run")
     end
+
     client = setup[:client]
 
     # Bootstrap entity data from existing test data.
@@ -39,16 +55,6 @@ class VatEntityTest < Minitest::Test
       vat_ref01_data = Helpers.to_map(vat_ref01_data_raw[0][1])
     end
 
-    # LOAD
-    vat_ref01_ent = client.Vat(nil)
-    vat_ref01_match_dt0 = {
-      "id" => vat_ref01_data["id"],
-    }
-    vat_ref01_data_dt0_loaded = vat_ref01_ent.load(vat_ref01_match_dt0, nil)
-    vat_ref01_data_dt0_load_result = Helpers.to_map(vat_ref01_data_dt0_loaded.respond_to?(:data_get) ? vat_ref01_data_dt0_loaded.data_get : vat_ref01_data_dt0_loaded)
-    assert !vat_ref01_data_dt0_load_result.nil?
-    assert_equal vat_ref01_data_dt0_load_result["id"], vat_ref01_data["id"]
-
   end
 end
 
@@ -56,7 +62,7 @@ def vat_basic_setup(extra)
   Runner.load_env_local
 
   entity_data_file = File.join(__dir__, "..", "..", ".sdk", "test", "entity", "vat", "VatTestData.json")
-  entity_data_source = File.read(entity_data_file)
+  entity_data_source = File.read(entity_data_file, encoding: "UTF-8")
   entity_data = JSON.parse(entity_data_source)
 
   options = {}
@@ -66,7 +72,7 @@ def vat_basic_setup(extra)
 
   # Generate idmap via transform.
   idmap = Vs.transform(
-    ["vat01", "vat02", "vat03", "country01"],
+    ["vat01", "vat02", "vat03"],
     {
       "`$PACK`" => ["", {
         "`$KEY`" => "`$COPY`",
@@ -75,9 +81,8 @@ def vat_basic_setup(extra)
     }
   )
 
-  # Detect ENTID env override before envOverride consumes it. When live
-  # mode is on without a real override, the basic test runs against synthetic
-  # IDs from the fixture and 4xx's. Surface this so the test can skip.
+  # Whether *_ENTID supplied the idmap, read before env_override consumes
+  # it: without it, the ids a live flow binds are the fixture's synthetic ones.
   entid_env_raw = ENV["EU_VAT_VALIDATION_TEST_VAT_ENTID"]
   idmap_overridden = !entid_env_raw.nil? && entid_env_raw.strip.start_with?("{")
 

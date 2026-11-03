@@ -75,7 +75,7 @@ func runOp(client *sdk.EuVatValidationSDK, op string, query *eng.Value, entityAt
 
 // entityFor dispatches on the lowercase entity name. The generator
 // emits one `case "<name>":` per entity defined in the SDK model.
-func entityFor(client *sdk.EuVatValidationSDK, name string) (sdk.EuVatValidationEntity, error) {
+func entityFor(client *sdk.EuVatValidationSDK, name string) (sdk.EuVatValidationEntityBase, error) {
 	switch strings.ToLower(name) {
 	case "validate_format":
 		return client.ValidateFormat(nil), nil

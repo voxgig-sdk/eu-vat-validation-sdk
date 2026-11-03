@@ -84,9 +84,12 @@ class VatEntity extends EuVatValidationEntityBase_1.EuVatValidationEntityBase {
         catch (err) {
             // What a hook throws here must not escape the cleaning below.
             try {
-                fres = featureHook(ctx, 'PreUnexpected');
-                if (fres instanceof Promise) {
-                    await fres;
+                // Once per operation: makeError fires it for its own error.
+                if (!ctx.unexpectedFired) {
+                    fres = featureHook(ctx, 'PreUnexpected');
+                    if (fres instanceof Promise) {
+                        await fres;
+                    }
                 }
             }
             catch (hookerr) {
@@ -98,7 +101,7 @@ class VatEntity extends EuVatValidationEntityBase_1.EuVatValidationEntityBase {
             }
             else {
                 // Off-happy-path (throw disabled): typed as any so the method's
-                // Promise<Vat> return stays clean under strict null checks.
+                // Promise<VatEntity> return stays clean under strict null checks.
                 return undefined;
             }
         }

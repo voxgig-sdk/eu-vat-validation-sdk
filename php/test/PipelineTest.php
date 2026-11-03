@@ -46,9 +46,9 @@ class PlClient
 // records the data it was given.
 class PlEntityItem
 {
-    public array $data = [];
+    public mixed $data = [];
 
-    public function data_set(array $d): void
+    public function data_set(mixed $d): void
     {
         $this->data = $d;
     }
@@ -115,6 +115,20 @@ class PipelineTest extends TestCase
     private static function code(mixed $err): string
     {
         return ($err instanceof EuVatValidationError) ? $err->sdk_code : '';
+    }
+
+    // An object is a map to the struct port, so it is a map to a cookie
+    // argument: its properties go out as pairs, read through the port.
+    public function test_prepare_headers_cookie_object(): void
+    {
+        $utility = self::utility();
+        $ctx = self::ctx([
+            'utility' => $utility,
+            'point' => ['args' => ['cookie' => [['name' => 'prefs', 'orig' => 'prefs', 'kind' => 'cookie']]]],
+            'reqmatch' => ['prefs' => (object) ['size' => 2, 'lang' => 'en gb']],
+        ]);
+        $headers = ($utility->prepare_headers)($ctx);
+        $this->assertSame('lang=en%20gb; size=2', $headers['cookie'] ?? null);
     }
 
 
@@ -351,7 +365,7 @@ class PipelineTest extends TestCase
         $ctx = self::ctx([
             'entity' => $entity,
             'spec' => new EuVatValidationSpec(['step' => 's']),
-            'result' => new EuVatValidationResult(['ok' => true, 'resdata' => [['a' => 1], ['a' => 2]]]),
+            'result' => new EuVatValidationResult(['ok' => true, 'resdata' => [['a' => 1], 'b.md']]),
         ]);
         $ctx->op = new EuVatValidationOperation(['name' => 'list', 'entity' => 'x']);
         [$result, $err] = EuVatValidationMakeResult::call($ctx);
@@ -359,6 +373,7 @@ class PipelineTest extends TestCase
         $this->assertCount(2, $result->resdata);
         $this->assertCount(2, $entity->made);
         $this->assertSame(['a' => 1], $result->resdata[0]->data);
+        $this->assertSame('b.md', $result->resdata[1]->data);
     }
 
     public function test_make_result_empty_list_yields_empty_resdata(): void
@@ -495,6 +510,108 @@ class PipelineTest extends TestCase
         return self::resp($status, $data, $headers);
     }
 
+
+    // A Django route answers its slashless form with a relative Location. The
+    // transport follows each hop, and answers a "manual" fetch with the 3xx.
+    // The server is a child process: PHP serves nothing while it waits.
+    public function test_fetcher_follows_a_relative_redirect(): void
+    {
+        if (!function_exists('proc_open')) {
+            $this->markTestSkipped('the server runs in a child process');
+        }
+        $server = <<<'SERVER'
+            $srv = stream_socket_server('tcp://127.0.0.1:0');
+            fwrite(STDOUT, explode(':', stream_socket_get_name($srv, false))[1] . "\n");
+            fflush(STDOUT);
+            $moved = ['/redirect/r1' => [301, '/redirect/r1/'], '/redirect/r1/' => [308, 'done']];
+            for ($i = 0; $i < 4 && ($sock = @stream_socket_accept($srv, 20)); $i++) {
+                $path = explode(' ', (string)fgets($sock))[1] ?? '';
+                while (!in_array(fgets($sock), ["\r\n", "\n", false], true)) {
+                }
+                fwrite(STDOUT, $path . "\n");
+                $hop = $moved[$path] ?? null;
+                $body = '/redirect/r1/done' === $path ? '{"id":"r1"}' : '';
+                fwrite($sock, 'HTTP/1.1 ' . ($hop[0] ?? ('' === $body ? 404 : 200)) . " X\r\n"
+                    . (null === $hop ? '' : "Location: {$hop[1]}\r\n") . "Content-Type: application/json\r\n"
+                    . 'Content-Length: ' . strlen($body) . "\r\nConnection: close\r\n\r\n" . $body);
+                fclose($sock);
+            }
+            SERVER;
+        $proc = proc_open([PHP_BINARY, '-r', $server], [1 => ['pipe', 'w']], $pipes);
+        try {
+            $base = 'http://127.0.0.1:' . trim((string)fgets($pipes[1]));
+            $client = new EuVatValidationSDK(['base' => $base]);
+            $utility = $client->get_utility();
+            $ctx = ($utility->make_context)(['opname' => 'load', 'client' => $client,
+                'utility' => $utility], null);
+
+            [$res, $err] = ($utility->fetcher)($ctx, $base . '/redirect/r1', ['method' => 'GET', 'headers' => []]);
+            $this->assertNull($err);
+            $this->assertSame(200, $res['status']);
+            $this->assertSame(['id' => 'r1'], ($res['json'])());
+
+            [$manual, $merr] = ($utility->fetcher)($ctx, $base . '/redirect/r1',
+                ['method' => 'GET', 'headers' => [], 'redirect' => 'manual']);
+            $this->assertNull($merr);
+            $this->assertSame(301, $manual['status']);
+            $this->assertSame("/redirect/r1\n/redirect/r1/\n/redirect/r1/done\n/redirect/r1\n",
+                stream_get_contents($pipes[1]));
+        } finally {
+            proc_terminate($proc);
+            proc_close($proc);
+        }
+    }
+
+
+    // The guard writes to STDERR, so it is read from a child process. Nothing
+    // listens on port 9: a request the guard let through fails there.
+    public function test_get_only_guard_prints_no_query_credential(): void
+    {
+        if (!function_exists('proc_open')) {
+            $this->markTestSkipped('the guard is read from a child process');
+        }
+        $sdk = realpath(__DIR__ . '/../euvatvalidation_sdk.php');
+        $code = 'require ' . var_export($sdk, true) . ';'
+            . ' $client = new EuVatValidationSDK(["base" => "http://127.0.0.1:9"]);'
+            . ' $utility = $client->get_utility();'
+            . ' $ctx = ($utility->make_context)(["opname" => "create", "client" => $client,'
+            . ' "utility" => $utility], null);'
+            . ' $url = "http://127.0.0.1:9/planet/p1?apikey=GUARDKEY01&x=1";'
+            . ' [, $err] = ($utility->fetcher)($ctx, $url, ["method" => "POST"]);'
+            . ' echo $err->sdk_code, " ", $err->msg, "\n";'
+            . ' [, $geterr] = ($utility->fetcher)($ctx, $url, ["method" => "GET"]);'
+            . ' echo $geterr instanceof EuVatValidationError ? $geterr->sdk_code : "sent";';
+        $env = array_merge(getenv(), ['VOXGIG_GETONLY_GUARD' => 'TRUE']);
+        $proc = proc_open([PHP_BINARY, '-r', $code],
+            [1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes, null, $env);
+        $out = stream_get_contents($pipes[1]);
+        $errout = stream_get_contents($pipes[2]);
+        fclose($pipes[1]);
+        fclose($pipes[2]);
+        proc_close($proc);
+
+        $this->assertStringContainsString('[GET-ONLY GUARD] blocked POST /planet/p1', $errout);
+        $this->assertStringStartsWith('fetch_getonly_block [GET-ONLY GUARD] blocked POST /planet/p1', $out);
+        $this->assertStringEndsWith("\nsent", $out);
+        $this->assertStringNotContainsString('GUARDKEY01', $errout);
+        $this->assertStringNotContainsString('GUARDKEY01', $out);
+    }
+
+    // The struct port's UNDEF sentinel is one object per process, and the
+    // struct corpus writes into it: no client may take it for a fetcher.
+    public function test_fetcher_without_system_fetch_uses_the_default_transport(): void
+    {
+        $sentinel = \Voxgig\Struct\Struct::undef();
+        $sentinel->pipelinetest = true;
+        try {
+            $client = new EuVatValidationSDK(['base' => 'http://localhost:8080']);
+            $this->assertArrayNotHasKey('fetch', $client->options['system'] ?? []);
+            $this->assertNull(EuVatValidationFetcher::systemFetch($client->options_map()));
+            $this->assertTrue(EuVatValidationFetcher::usesDefault(self::ctx(['client' => $client])));
+        } finally {
+            unset($sentinel->pipelinetest);
+        }
+    }
 
     // --- make_fetch_def ----------------------------------------------------------
 
@@ -750,7 +867,10 @@ class PipelineTest extends TestCase
         if ('' !== $cred['pair']) {
             // A cookie credential is a `<scheme>=<key>` pair, and the scheme
             // name leaves no room for the option's prefix.
-            $this->assertMatchesRegularExpression(self::COOKIE_PAIR, $cred['value']);
+            // preg_match rather than assertMatchesRegularExpression, which
+            // PHPUnit 8 does not have.
+            $this->assertSame(1, preg_match(self::COOKIE_PAIR, (string) $cred['value']),
+                (string) $cred['value']);
             return;
         }
         // A header credential is prefix-joined; a query credential is the raw

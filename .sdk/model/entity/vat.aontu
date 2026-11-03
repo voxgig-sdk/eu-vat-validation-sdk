@@ -129,6 +129,10 @@ main: kit: entity: vat: {
               "number"
             ]
           }
+          rs: {
+            kind: "json"
+            media: "application/json"
+          }
           s: [
             {
               lit: "vat"

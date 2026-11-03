@@ -3,7 +3,10 @@ package sdktest
 import (
 	"errors"
 	"fmt"
+	"net/http"
+	"net/http/httptest"
 	"strings"
+	"sync"
 	"testing"
 
 	sdk "github.com/voxgig-sdk/eu-vat-validation-sdk/go"
@@ -328,6 +331,91 @@ func TestPrimaryUtility(t *testing.T) {
 			t.Error("expected error for test mode fetch")
 		} else if !strings.Contains(err.Error(), "blocked") {
 			t.Errorf("expected error containing 'blocked', got: %v", err)
+		}
+	})
+
+	// Nothing listens on port 9: a request the guard let through fails there.
+	// A Django route answers its slashless form with a relative Location. The
+	// transport follows each hop, and answers a "manual" fetch with the 3xx.
+	t.Run("fetcher-redirect", func(t *testing.T) {
+		var mu sync.Mutex
+		seen := []string{}
+		moved := map[string]struct {
+			code int
+			to   string
+		}{"/redirect/r1": {301, "/redirect/r1/"}, "/redirect/r1/": {308, "done"}}
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			mu.Lock()
+			seen = append(seen, r.URL.Path)
+			mu.Unlock()
+			if hop, ok := moved[r.URL.Path]; ok {
+				w.Header().Set("Location", hop.to)
+				w.WriteHeader(hop.code)
+				return
+			}
+			if r.URL.Path != "/redirect/r1/done" {
+				w.WriteHeader(404)
+				return
+			}
+			w.Header().Set("Content-Type", "application/json")
+			fmt.Fprint(w, `{"id":"r1"}`)
+		}))
+		defer server.Close()
+
+		liveClient := sdk.NewEuVatValidationSDK(map[string]any{"base": server.URL})
+		liveUtility := liveClient.GetUtility()
+		ctx := liveUtility.MakeContext(map[string]any{
+			"opname":  "load",
+			"client":  liveClient,
+			"utility": liveUtility,
+		}, nil)
+
+		res, err := liveUtility.Fetcher(ctx, server.URL+"/redirect/r1", map[string]any{"method": "GET", "headers": map[string]any{}})
+		resmap, _ := res.(map[string]any)
+		if err != nil || resmap["status"] != 200 {
+			t.Fatalf("expected the redirect followed to a 200, got: %v %v", res, err)
+		}
+		if body := resmap["json"].(func() any)(); vs.GetProp(body, "id") != "r1" {
+			t.Errorf("unexpected body: %v", body)
+		}
+		mu.Lock()
+		sent := strings.Join(seen, " ")
+		mu.Unlock()
+		if sent != "/redirect/r1 /redirect/r1/ /redirect/r1/done" {
+			t.Errorf("unexpected requests: %v", sent)
+		}
+
+		res, err = liveUtility.Fetcher(ctx, server.URL+"/redirect/r1",
+			map[string]any{"method": "GET", "headers": map[string]any{}, "redirect": "manual"})
+		if resmap, _ = res.(map[string]any); err != nil || resmap["status"] != 301 {
+			t.Errorf("expected a manual redirect answered by its 301, got: %v %v", res, err)
+		}
+	})
+
+	t.Run("fetcher-getonly-guard", func(t *testing.T) {
+		liveClient := sdk.NewEuVatValidationSDK(map[string]any{"base": "http://127.0.0.1:9"})
+		liveUtility := liveClient.GetUtility()
+		ctx := liveUtility.MakeContext(map[string]any{
+			"opname":  "create",
+			"client":  liveClient,
+			"utility": liveUtility,
+		}, nil)
+		url := "http://127.0.0.1:9/planet/p1?apikey=GUARDKEY01"
+		t.Setenv("VOXGIG_GETONLY_GUARD", "TRUE")
+
+		_, err := liveUtility.Fetcher(ctx, url, map[string]any{"method": "POST", "headers": map[string]any{}})
+		var sdkerr *sdk.EuVatValidationError
+		if !errors.As(err, &sdkerr) || sdkerr.Code != "fetch_getonly_block" {
+			t.Fatalf("expected fetch_getonly_block, got: %v", err)
+		}
+		if !strings.Contains(sdkerr.Msg, "[GET-ONLY GUARD] blocked POST /planet/p1") ||
+			strings.Contains(sdkerr.Msg, "GUARDKEY01") {
+			t.Errorf("unexpected guard message: %s", sdkerr.Msg)
+		}
+
+		_, err = liveUtility.Fetcher(ctx, url, map[string]any{"method": "GET", "headers": map[string]any{}})
+		if err == nil || errors.As(err, &sdkerr) {
+			t.Errorf("expected a GET to reach the closed port, got: %v", err)
 		}
 	})
 
@@ -806,6 +894,43 @@ func (f *testInitFeature) Init(ctx *sdk.Context, options map[string]any) {
 	}
 }
 
+// A typed slice in the call's match is a list to the struct port, so a cookie
+// argument repeats its name for each item rather than sending the slice's
+// text.
+func TestPrepareHeadersCookieTypedSlice(t *testing.T) {
+	client := sdk.TestSDK(nil, nil)
+	utility := client.GetUtility()
+	ctx := makeTestCtx(client, utility, nil)
+	ctx.Point = map[string]any{
+		"args": map[string]any{"cookie": []any{
+			map[string]any{"name": "theme", "orig": "theme", "kind": "cookie"},
+		}},
+	}
+	ctx.Reqmatch = map[string]any{"theme": []string{"dark", "x y"}}
+	headers := utility.PrepareHeaders(ctx)
+	if "theme=dark; theme=x%20y" != headers["cookie"] {
+		t.Errorf("expected the slice as repeated pairs, got %v", headers["cookie"])
+	}
+}
+
+// A typed map is a map to a cookie argument as a typed slice is a list: its
+// keys go out as pairs, and replace the caller's cookies of those names.
+func TestPrepareHeadersCookieTypedMap(t *testing.T) {
+	client := sdk.TestSDK(nil, map[string]any{"headers": map[string]any{"Cookie": "lang=old; theme=dark"}})
+	utility := client.GetUtility()
+	ctx := makeTestCtx(client, utility, nil)
+	ctx.Point = map[string]any{
+		"args": map[string]any{"cookie": []any{
+			map[string]any{"name": "prefs", "orig": "prefs", "kind": "cookie"},
+		}},
+	}
+	ctx.Reqmatch = map[string]any{"prefs": map[string]string{"size": "2", "lang": "en gb"}}
+	headers := utility.PrepareHeaders(ctx)
+	if "theme=dark; lang=en%20gb; size=2" != headers["cookie"] {
+		t.Errorf("expected the map as its pairs, got %v", headers["cookie"])
+	}
+}
+
 // Helper: create basic test context
 func makeTestCtx(client *sdk.EuVatValidationSDK, utility *sdk.Utility, overrides map[string]any) *sdk.Context {
 	ctxmap := map[string]any{
@@ -840,7 +965,6 @@ func makeTestFullCtx(client *sdk.EuVatValidationSDK, utility *sdk.Utility) *sdk.
 
 // useVS prevents unused import error
 var _ = vs.Clone
-
 
 // retargetAuth rewrites the corpus's `headers` bag to the container this
 // SDK's PrepareAuth writes to, and the `authorization` key inside it to the

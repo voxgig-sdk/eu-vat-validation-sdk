@@ -12,7 +12,7 @@ var NewTestFeatureFunc func() Feature
 
 var NewTimeoutFeatureFunc func() Feature
 
-var NewValidateFormatEntityFunc func(client *EuVatValidationSDK, entopts map[string]any) EuVatValidationEntity
+var NewValidateFormatEntityFunc func(client *EuVatValidationSDK, entopts map[string]any) EuVatValidationEntityBase
 
-var NewVatEntityFunc func(client *EuVatValidationSDK, entopts map[string]any) EuVatValidationEntity
+var NewVatEntityFunc func(client *EuVatValidationSDK, entopts map[string]any) EuVatValidationEntityBase
 

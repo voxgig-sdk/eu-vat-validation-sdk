@@ -1,4 +1,4 @@
-import { flowSteps } from '@voxgig/sdkgen'
+import { flowSteps, opReachable, validateSeeds } from '@voxgig/sdkgen'
 
 import {
   flatten,
@@ -25,12 +25,73 @@ import {
   buildIdNames,
   getMatchEntries,
   isAuthActive,
-  entityDataIdField, envName, envToken,
+  entityDataIdField, entityRecordIdField, envName, envToken,
   serverVarEnv,
-  serverVariables
+  serverVariables,
+  invalidRequest,
+  liveFlowNeeds, liveStrict, liveStrictNote,
+  liveRouteExamples, liveStepExamples, flowLoadRoute, flowLoadReadsRecord,
+  liveGates, liveExcludedLines, liveExcludedSummary, LIVE_GETONLY_ENV,
+  liveEntity,
 } from '@voxgig/sdkgen'
 
 import { formatRubyValue } from './utility_rb'
+
+
+// The live prologue of a flow built from offline fixtures: blocked without
+// the ids it binds, and a create-less load reading the first listed record.
+function liveFlowGate(entity: any, needs: any, entidEnv: string): string {
+  let out = ''
+  if (null != needs.examples) {
+    out += `    if setup[:live]
+      { ${needs.examples
+      .map(([k, ex]: any) => JSON.stringify(k) + ' => ' + formatRubyValue(ex)).join(', ')} }.each do |_live_key, _live_ex|
+        if setup[:synthetic_only] || setup[:idmap][_live_key].nil?
+          setup[:idmap][_live_key] = _live_ex
+        end
+      end
+    end
+`
+  }
+  if (0 < needs.keys.length) {
+    out += `    if setup[:live]
+      [${needs.keys.map((k: string) => JSON.stringify(k)).join(', ')}].each do |_live_key|
+        if setup[:synthetic_only] || setup[:idmap][_live_key].nil?
+          Runner.live_miss(LIVE_STRICT, "Live entity test blocked: needs #{_live_key} via ${entidEnv}")
+        end
+      end
+    end
+`
+  }
+  if (null != needs.blocked) {
+    out += `    if setup[:live]
+      Runner.live_miss(LIVE_STRICT, "Live entity test blocked: " + ${JSON.stringify(needs.blocked)})
+    end
+`
+  }
+  out += '    client = setup[:client]\n'
+  if (null != needs.record) {
+    out += `    if setup[:live]
+      Runner.live_existing(setup, LIVE_STRICT, ${JSON.stringify(entity.name)}) do
+        [{ "id" => setup[:idmap][${JSON.stringify(needs.record)}] }]
+      end
+    end
+`
+  }
+  if (null != needs.discover) {
+    const match = Object.entries(needs.discover)
+      .map(([k, v]: any) => `${JSON.stringify(k)} => setup[:idmap][${JSON.stringify(v)}]`)
+      .concat(liveRouteExamples(entity, 'list', Object.keys(needs.discover))
+        .map(([k, ex]) => `${JSON.stringify(k)} => ${formatRubyValue(ex)}`)).join(', ')
+    out += `    if setup[:live]
+      Runner.live_existing(setup, LIVE_STRICT, ${JSON.stringify(entity.name)}) do
+        client.${entity.Name}(nil).list({${match}}, nil)
+      end
+    end
+`
+  }
+  return out
+}
 
 
 // See TestEntity_ts.ts for the GenCtx/OpGen contract.
@@ -49,13 +110,13 @@ const TestEntity = cmp(function TestEntity(props: any) {
   const model: Model = ctx$.model
 
   const target = props.target
-  const entity: ModelEntity = props.entity
+  const entity: ModelEntity = liveEntity(ctx$, props.entity)
 
-  // The stream test streams the "list" op and asserts a 3-item collection, so
-  // it only applies to entities that declare a list op. Others (e.g. Batch =
-  // create/load) have no list endpoint — make_point errors and the stream
-  // yields nothing — so skip the stream test for them.
-  const hasList = !!(entity.op && (entity.op as any)?.list)
+  // The stream test streams the "list" op with no match and asserts a 3-item
+  // collection, so it only applies to an entity whose list a bare call can
+  // reach: not one without a list (e.g. Batch = create/load), not a nested
+  // list needing its parent's id, and not one whose routes all need an action.
+  const hasList = opReachable((entity.op as any)?.list, [])
 
   const basicflow: ModelEntityFlow | undefined =
     getModelPath(model, `main.${KIT}.flow.Basic${nom(entity, 'Name')}Flow`)
@@ -98,6 +159,9 @@ const TestEntity = cmp(function TestEntity(props: any) {
 
   const genCtx: GenCtx = { model, entity, flow: basicflow, PROJUPPER }
 
+  const strict = liveStrict(model, target.name)
+  const entidEnv = PROJUPPER + '_TEST_' + envToken(entity.name) + '_ENTID'
+
   File({ name: entity.name + '_entity_test.' + target.ext }, () => {
 
     Content(`# ${entity.Name} entity test
@@ -108,12 +172,33 @@ require_relative "../${model.const.Name}_sdk"
 require_relative "runner"
 
 class ${entity.Name}EntityTest < Minitest::Test
+${liveStrictNote(strict, '#', '  ')}
+  LIVE_STRICT = ${strict}
+
   def test_create_instance
     testsdk = ${model.const.Name}SDK.test(nil, nil)
     ent = testsdk.${entity.Name}(nil)
     assert !ent.nil?
   end
 ${hasList ? `
+  def test_list_entities
+    seed = {
+      "entity" => {
+        "${entity.name}" => {
+          "l1" => { "id" => "l1" },
+          "l2" => { "id" => "l2" },
+        },
+      },
+    }
+    items = ${model.const.Name}SDK.test(seed, nil).${entity.Name}(nil).list(nil, nil)
+    # list resolves to one entity per record; data_get reads the record.
+    assert_equal 2, items.length
+    items.each do |item|
+      assert item.respond_to?(:data_get)
+      assert item.data_get.is_a?(Hash)
+    end
+  end
+
   # Feature #4: the entity stream(action, ...) method runs the op pipeline and
   # returns an Enumerator over result items. With the streaming feature active
   # it yields the feature's incremental output; otherwise it falls back to the
@@ -149,7 +234,7 @@ ${hasList ? `
       assert_equal 3, got.length
     end
   end
-` : ''}
+${failureTests(model, entity)}${validateListTest(model, entity)}` : ''}${validateTest(model, entity)}
   def test_basic_flow
     setup = ${entity.name}_basic_setup(nil)
     # Per-op sdk-test-control.json skip.
@@ -161,20 +246,16 @@ ${hasList ? `
         return
       end
     end
-    # The basic flow consumes synthetic IDs from the fixture. In live mode
-    # without an *_ENTID env override, those IDs hit the live API and 4xx.
-    if setup[:synthetic_only]
-      skip "live entity test uses synthetic IDs from fixture — set ${PROJUPPER}_TEST_${envToken(entity.name)}_ENTID JSON to run live"
-      return
-    end
-    client = setup[:client]
-
 `)
 
-    // Check if the flow has a create step
-    const flowHasCreate = allSteps.some((s: any) => s.o === 'create')
-    if (!flowHasCreate) {
-      Content(`    # Bootstrap entity data from existing test data.
+    const flowBody = (flow: any) => {
+      const steps = flowSteps(flow) as any[]
+      Content(liveFlowGate(entity, liveFlowNeeds(entity, flow), entidEnv) + '\n')
+
+      // Check if the flow has a create step
+      const flowHasCreate = steps.some((s: any) => s.o === 'create')
+      if (!flowHasCreate) {
+        Content(`    # Bootstrap entity data from existing test data.
     ${entity.name}_ref01_data_raw = Vs.items(Helpers.to_map(
       Vs.getpath(setup[:data], "existing.${entity.name}")))
     ${entity.name}_ref01_data = nil
@@ -183,26 +264,51 @@ ${hasList ? `
     end
 
 `)
+      }
+
+      // Model-driven step iteration
+      each(steps, (step: any, index: any) => {
+        // Never emit a REMOVE (or its removed-item verify LIST) without a
+        // preceding CREATE: a coherent CRUD flow only removes what it created,
+        // so a create-less remove would mutate pre-existing (live) data.
+        if (!flowHasCreate) {
+          if ('remove' === step.o) { return }
+          if ('list' === step.o &&
+            (step.v || []).some((v: any) => 'ItemNotExists' === v.apply)) { return }
+        }
+        const opgen: OpGen = GENERATE_OP[step.o]
+        if (opgen) {
+          opgen({ ...genCtx, flow }, step, index)
+          Content('\n')
+        }
+      })
     }
 
-    // Model-driven step iteration
-    each(flowSteps(basicflow), (step: any, index: any) => {
-      // Never emit a REMOVE (or its removed-item verify LIST) without a
-      // preceding CREATE: a coherent CRUD flow only removes what it created,
-      // so a create-less remove would mutate pre-existing (live) data.
-      if (!flowHasCreate) {
-        if ('remove' === step.o) { return }
-        if ('list' === step.o &&
-          (step.v || []).some((v: any) => 'ItemNotExists' === v.apply)) { return }
-      }
-      const opgen: OpGen = GENERATE_OP[step.o]
-      if (opgen) {
-        opgen(genCtx, step, index)
-        Content('\n')
-      }
-    })
+    for (const { getOnly, plan, runs } of liveGates(entity, basicflow)) {
+      Content(`    if setup[:live]${getOnly ? ` && ENV[${formatRubyValue(LIVE_GETONLY_ENV)}] == "TRUE"` : ''}
+${liveExcludedLines(plan).map((line) => '      puts ' + formatRubyValue(line) + '\n').join('')}`)
+      if (!runs) {
+        Content(`      skip(${formatRubyValue(liveExcludedSummary(plan))})
+    end
 
-    Content(`  end
+`)
+      }
+      else {
+        flowBody(plan.flow)
+        Content(`      return
+    end
+
+`)
+      }
+    }
+
+    flowBody(basicflow)
+
+    Content(`${strict ? '' : `  rescue Minitest::Skip
+    raise
+  rescue StandardError, Minitest::Assertion => e
+    Runner.live_observe(e, setup, LIVE_STRICT)
+`}  end
 end
 
 `)
@@ -212,9 +318,9 @@ end
   Runner.load_env_local
 
   entity_data_file = File.join(__dir__, "..", "..", ".sdk", "test", "entity", "${entity.name}", "${entity.Name}TestData.json")
-  entity_data_source = File.read(entity_data_file)
+  entity_data_source = File.read(entity_data_file, encoding: "UTF-8")
   entity_data = JSON.parse(entity_data_source)
-
+${fixtureIdentity(entity)}
   options = {}
   options["entity"] = entity_data["existing"]
 
@@ -236,9 +342,8 @@ end
 
 `)
 
-    Content(`  # Detect ENTID env override before envOverride consumes it. When live
-  # mode is on without a real override, the basic test runs against synthetic
-  # IDs from the fixture and 4xx's. Surface this so the test can skip.
+    Content(`  # Whether *_ENTID supplied the idmap, read before env_override consumes
+  # it: without it, the ids a live flow binds are the fixture's synthetic ones.
   entid_env_raw = ENV["${PROJUPPER}_TEST_${envToken(entity.name)}_ENTID"]
   idmap_overridden = !entid_env_raw.nil? && entid_env_raw.strip.start_with?("{")
 
@@ -341,7 +446,7 @@ const generateCreate: OpGen = (ctx, step, index) => {
     assert !${datavar}.nil?
 `)
   if (null != ctx.entity.id) {
-    Content(`    assert !${datavar}["id"].nil?
+    Content(`    assert !${datavar}[${rid(ctx.entity)}].nil?
 `)
   }
 }
@@ -380,6 +485,7 @@ const generateList: OpGen = (ctx, step, index) => {
     Content(`    }
 `)
   }
+  Content(liveFill(entity, step, matchvar, flow))
 
   Content(`
     ${listvar}_result = ${entvar}.list(${matchvar}, nil)
@@ -399,7 +505,7 @@ const generateList: OpGen = (ctx, step, index) => {
         Content(`
     found_item = Vs.select(
       Runner.entity_list_to_data(${listvar}_result),
-      { "id" => ${refDataVar}["id"] })
+      { ${rid(entity)} => ${refDataVar}[${rid(entity)}] })
     assert !Vs.isempty(found_item)
 `)
       } else if ('ItemNotExists' === validator.apply && hasRefData && hasDataId) {
@@ -407,7 +513,7 @@ const generateList: OpGen = (ctx, step, index) => {
         Content(`
     not_found_item = Vs.select(
       Runner.entity_list_to_data(${listvar}_result),
-      { "id" => ${refDataVar}["id"] })
+      { ${rid(entity)} => ${refDataVar}[${rid(entity)}] })
     assert Vs.isempty(not_found_item)
 `)
       }
@@ -440,7 +546,7 @@ const generateUpdate: OpGen = (ctx, step, index) => {
   Content(`    ${datavar}_up = {
 `)
   if (hasEntIdU) {
-    Content(`      "id" => ${srcdatavar}["id"],
+    Content(`      "id" => ${srcdatavar}[${rid(entity)}],
 `)
   }
 
@@ -475,7 +581,7 @@ const generateUpdate: OpGen = (ctx, step, index) => {
     assert !${resdatavar}.nil?
 `)
   if (hasEntIdU) {
-    Content(`    assert_equal ${resdatavar}["id"], ${datavar}_up["id"]
+    Content(`    assert_equal ${resdatavar}[${rid(entity)}], ${datavar}_up["id"]
 `)
   }
 
@@ -522,7 +628,7 @@ const generateLoad: OpGen = (ctx, step, index) => {
     Content(`    ${entvar} = client.${entity.Name}(nil)
 `)
   }
-  if (!hasSrcData && hasEntId) {
+  if (!hasSrcData && (hasEntId || flowLoadReadsRecord(entity, step))) {
     Content(`    ${srcdatavar}_raw = Vs.items(Helpers.to_map(
       Vs.getpath(setup[:data], "existing.${entity.name}")))
     ${srcdatavar} = nil
@@ -533,17 +639,17 @@ const generateLoad: OpGen = (ctx, step, index) => {
   }
   if (hasEntId) {
     Content(`    ${matchvar} = {
-      "id" => ${srcdatavar}["id"],
+      "id" => ${srcdatavar}[${rid(entity)}],
     }
-    ${datavar}_loaded = ${entvar}.load(${matchvar}, nil)
+${loadMatch(entity, step, matchvar, srcdatavar)}${liveFill(entity, step, matchvar, flow)}    ${datavar}_loaded = ${entvar}.load(${matchvar}, nil)
     ${datavar}_load_result = Helpers.to_map(${datavar}_loaded.respond_to?(:data_get) ? ${datavar}_loaded.data_get : ${datavar}_loaded)
     assert !${datavar}_load_result.nil?
-    assert_equal ${datavar}_load_result["id"], ${srcdatavar}["id"]
+    assert_equal ${datavar}_load_result[${rid(entity)}], ${srcdatavar}[${rid(entity)}]
 `)
   }
   else {
     Content(`    ${matchvar} = {}
-    ${datavar}_loaded = ${entvar}.load(${matchvar}, nil)
+${loadMatch(entity, step, matchvar, srcdatavar)}${liveFill(entity, step, matchvar, flow)}    ${datavar}_loaded = ${entvar}.load(${matchvar}, nil)
     assert !${datavar}_loaded.nil?
 `)
   }
@@ -572,10 +678,74 @@ const generateRemove: OpGen = (ctx, step, index) => {
   }
   // Always match the prior-created entity by id to avoid mock-order flakes.
   Content(`    ${matchvar} = {
-      "id" => ${srcdatavar}["id"],
+      "id" => ${srcdatavar}[${rid(entity)}],
     }
-    ${entvar}.remove(${matchvar}, nil)
+${parentMatch(step, matchvar)}    ${entvar}.remove(${matchvar}, nil)
 `)
+}
+
+
+
+// The record field the entity's identity is read from, as a Ruby string.
+function rid(entity: any): string {
+  return JSON.stringify(entityRecordIdField(entity))
+}
+
+
+// The fixture keeps each record's key in `id`; an entity keeping its identity
+// in another field reads the key from there too.
+function fixtureIdentity(entity: any): string {
+  const field = entityRecordIdField(entity)
+  return 'id' === field ? '' : `
+  ((entity_data["existing"] || {})[${JSON.stringify(entity.name)}] || {}).each_value do |rec|
+    rec[${JSON.stringify(field)}] = rec["id"] if rec.is_a?(Hash) && !rec["id"].nil?
+  end
+`
+}
+
+
+// A child's route names its parents, and an entity no earlier step has
+// filled knows none of them, so the call itself gives each parent id. A live
+// ENTID may key a parent by its field name, the fixture by its own name.
+// A live step sends each example its route requires and the step leaves unbound.
+function liveFill(entity: any, step: any, matchvar: string, flow: any): string {
+  const fills = liveStepExamples(entity, step, flow)
+  return 0 === fills.length ? '' : `    if setup[:live]
+${fills.map(([k, ex]) => `      ${matchvar}[${JSON.stringify(k)}] = ${formatRubyValue(ex)}\n`).join('')}    end
+`
+}
+
+
+function parentMatch(step: any, matchvar: string): string {
+  return Object.entries(step.m || {})
+    .filter(([k]: any) => k !== 'id' && !k.endsWith('$'))
+    .map(([key, val]: any) => `    ${matchvar}["${key}"] = setup[:idmap]["${key}"] || setup[:idmap]["${val}"]
+`).join('')
+}
+
+// A load of a known record fills its route from that record, and from the
+// step's binding where the record holds no scalar for it. A record only the
+// fixture holds replaces the step's binding offline.
+function loadMatch(entity: any, step: any, matchvar: string, srcdatavar: string): string {
+  const route = flowLoadRoute(entity, step)
+  if (null == route) {
+    return parentMatch(step, matchvar)
+  }
+  if (route.offline) {
+    const own = route.args.filter((arg) => null != arg.field)
+    return parentMatch(step, matchvar) + (0 === own.length ? '' : `    unless setup[:live]
+${own.map((arg) => `      own = ${srcdatavar}["${arg.field}"]
+      ${matchvar}["${arg.name}"] = own if [String, Numeric, TrueClass, FalseClass].any? { |c| own.is_a?(c) }
+`).join('')}    end
+`)
+  }
+  return route.args.map((arg) => {
+    const bound = arg.idmap.map((key) => `setup[:idmap]["${key}"]`).join(' || ')
+    const own = `${srcdatavar}["${arg.field}"]`
+    return `    ${matchvar}["${arg.name}"] = ${null == arg.field ? bound :
+      `[String, Numeric, TrueClass, FalseClass].any? { |c| ${own}.is_a?(c) } ? ${own} : (${bound})`}
+`
+  }).join('')
 }
 
 
@@ -585,6 +755,133 @@ const GENERATE_OP: Record<string, OpGen> = {
   update: generateUpdate,
   load: generateLoad,
   remove: generateRemove,
+}
+
+
+// A failed operation raises from a stream as it does from the operation: a
+// transport failure, and a hook that rejects the call. A raising hook fires
+// PreUnexpected, and under throw false the call returns nil. The caller's
+// ctrl stays its own.
+function failureTests(model: Model, entity: ModelEntity): string {
+  const Name = model.const.Name
+  const Entity = entity.Name
+  return `
+  class FailHook < ${Name}BaseFeature
+    attr_reader :unexpected
+
+    def initialize
+      super()
+      @name = "failhook"
+      @unexpected = 0
+    end
+
+    def PreSpec(ctx)
+      raise "${entity.name} hook failed"
+    end
+
+    def PreUnexpected(ctx)
+      @unexpected += 1
+    end
+  end
+
+  def test_stream_error
+    offline = { "net" => { "offline" => true } }
+    err = assert_raises(StandardError) do
+      ${Name}SDK.test(offline, nil).${Entity}(nil).stream("list", nil, nil).to_a
+    end
+    assert_match(/offline/, err.message)
+
+    ${Name}SDK.test(offline, nil).${Entity}(nil)
+      .stream("list", nil, { "ctrl" => { "throw" => false } }).to_a
+
+    cfg = ${Name}Config.shared_config
+    if cfg["feature"].is_a?(Hash) && cfg["feature"].key?("rbac")
+      denied = ${Name}SDK.test(nil, { "feature" => { "rbac" => { "active" => true, "deny" => true } } })
+      err = assert_raises(StandardError) do
+        denied.${Entity}(nil).stream("list", nil, nil).to_a
+      end
+      assert_equal "rbac_denied", err.code
+    end
+  end
+
+  def test_stream_ctrl
+    explain = {}
+    ctrl = { "explain" => explain }
+    ${Name}SDK.test(nil, nil).${Entity}(nil).stream("list", nil, { "ctrl" => ctrl }).to_a
+    assert_equal ["explain"], ctrl.keys
+    assert_same explain, ctrl["explain"]
+    refute_empty explain
+  end
+
+  def test_unexpected
+    hook = FailHook.new
+    client = ${Name}SDK.new({ "feature" => { "test" => { "active" => true } }, "extend" => [hook] })
+
+    err = assert_raises(StandardError) do
+      client.${Entity}(nil).list(nil, nil)
+    end
+    assert_match(/hook failed/, err.message)
+    assert_operator hook.unexpected, :>, 0
+
+    fired = hook.unexpected
+    assert_nil client.${Entity}(nil).list(nil, { "throw" => false })
+    assert_operator hook.unexpected, :>, fired
+  end
+`
+}
+
+
+// An invalid request fails with validate's own error, before it is sent.
+function validateTest(model: Model, entity: ModelEntity): string {
+  const bad = invalidRequest(entity)
+  if (null == bad) {
+    return ''
+  }
+  const Name = model.const.Name
+  const args = Object.entries(bad.args)
+    .map(([k, v]) => JSON.stringify(k) + ' => ' + formatRubyValue(v)).join(', ')
+  return `
+  def test_validate
+    cfg = ${Name}Config.shared_config
+    unless cfg["feature"].is_a?(Hash) && cfg["feature"].key?("validate")
+      skip("feature not present in this SDK: validate")
+    end
+    client = ${Name}SDK.test(nil, { "feature" => { "validate" => { "active" => true } } })
+    err = assert_raises(StandardError) do
+      client.${entity.Name}(nil).${bad.op}({ ${args} }, nil)
+    end
+    assert_equal "validate_failed", err.code
+  end
+`
+}
+
+
+// A list response is checked record by record, not entity by entity.
+function validateListTest(model: Model, entity: ModelEntity): string {
+  const seeds = validateSeeds(entity)
+  if (null == seeds) {
+    return ''
+  }
+  const Name = model.const.Name
+  const seed = (rec: Record<string, any>) =>
+    '{ "entity" => { ' + formatRubyValue(entity.name) + ' => { "v1" => { ' +
+    Object.entries(rec).map(([k, v]) => formatRubyValue(k) + ' => ' + formatRubyValue(v)).join(', ') +
+    ' } } } }'
+  return `
+  def test_validate_list_response
+    cfg = ${Name}Config.shared_config
+    unless cfg["feature"].is_a?(Hash) && cfg["feature"].key?("validate")
+      skip("feature not present in this SDK: validate")
+    end
+    opts = { "feature" => { "validate" => { "active" => true, "request" => false, "response" => true } } }
+    listed = ${Name}SDK.test(${seed(seeds.valid)}, opts).${entity.Name}(nil).list(nil, nil)
+    assert_equal ["v1"], listed.map { |ent| ent.data_get["id"] }
+${null == seeds.invalid ? '' : `    err = assert_raises(StandardError) do
+      ${Name}SDK.test(${seed(seeds.invalid)}, opts).${entity.Name}(nil).list(nil, nil)
+    end
+    assert_equal "validate_failed", err.code
+`}  end
+`
 }
 
 
